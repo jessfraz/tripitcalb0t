@@ -7,11 +7,6 @@ Bot to automatically create Google Calendar events from TripIt flight data.
 I have OCD about the layout of my calendar events so that is why I made my own
 bot.
 
-
-To use this, you must enable "Web Authentication" on your account. You can
-follow the steps to do that 
-[here](https://tripit.github.io/api/doc/v1/#authentication_section).
-
 ## Installation
 
 #### Binaries
@@ -54,7 +49,11 @@ $ docker run --restart always -d \
  Version: v0.0.0
  Build: 1f12d9f
 
+  -calendar string
+        Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)
   -d    run in debug mode
+  -google-keyfile string
+        Path to Google Calendar keyfile (default "/home/jessie/.tripitcalb0t/google.json")
   -interval string
         update interval (ex. 5ms, 10s, 1m, 3h) (default "1m")
   -once
@@ -67,3 +66,32 @@ $ docker run --restart always -d \
   -version
         print version and exit
 ```
+
+## Setup
+
+### Google Calendar
+
+1. Enable the API: To get started using Calendar API v3, you need to 
+    first create a project in the 
+    [Google API Console](https://console.developers.google.com),
+    enable the API, and create credentials.
+
+    Follow the instructions 
+    [for step enabling the API here](https://developers.google.com/calendar/quickstart/go).
+
+2. Add the new service account to the Google Calendar account with 
+    [Read & Write](https://support.google.com/analytics/answer/2884495) 
+    permission.
+
+    The newly created service account will have an email address that looks
+    similar to: `quickstart@PROJECT-ID.iam.gserviceaccount.com`.
+
+    Use this email address to 
+    [add a user](https://support.google.com/analytics/answer/1009702) to the 
+    Google Calendar view you want to access via the API. 
+
+### TripIt
+
+To use this, you must enable "Web Authentication" on your account. You can
+follow the steps to do that 
+[here](https://tripit.github.io/api/doc/v1/#authentication_section).
