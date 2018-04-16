@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	calendar "google.golang.org/api/calendar/v3"
 )
 
 const (
@@ -39,8 +41,10 @@ type Event struct {
 	Description       string
 	LocationLatitude  float64
 	LocationLongitude float64
-	Start             time.Time
-	End               time.Time
+	Start             calendar.EventDateTime
+	End               calendar.EventDateTime
+	ID                string
+	SegmentID         string
 }
 
 // GetFlightSegmentsAsEvents returns an Event object for each of the
@@ -56,11 +60,19 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 		if err != nil {
 			return nil, fmt.Errorf("parsing StartDateTime for tripID -> %s, segment -> %s, from %s -> %s failed: %v", f.TripID, segment.ID, segment.StartAirportCode, segment.EndAirportCode, err)
 		}
+		start := calendar.EventDateTime{
+			DateTime: startDate.Format(time.RFC3339),
+			TimeZone: segment.StartDateTime.Timezone,
+		}
 
 		// Get the flight end time.
 		endDate, err := segment.EndDateTime.Parse()
 		if err != nil {
 			return nil, fmt.Errorf("parsing EndDateTime for tripID -> %s, segment -> %s, from %s -> %s failed: %v", f.TripID, segment.ID, segment.StartAirportCode, segment.EndAirportCode, err)
+		}
+		end := calendar.EventDateTime{
+			DateTime: endDate.Format(time.RFC3339),
+			TimeZone: segment.EndDateTime.Timezone,
 		}
 
 		// Create a description for the flight segment.
@@ -93,8 +105,10 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 			Description:       description,
 			LocationLatitude:  segment.StartAirportLatitude,
 			LocationLongitude: segment.StartAirportLongitude,
-			Start:             startDate,
-			End:               endDate,
+			Start:             start,
+			End:               end,
+			ID:                f.TripID,
+			SegmentID:         segment.ID,
 		})
 	}
 

@@ -134,7 +134,7 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("reading file %s failed: %v", googleCalendarKeyfile, err)
 	}
-	gcalTokenSource, err := google.JWTConfigFromJSON(gcalData, calendar.CalendarReadonlyScope)
+	gcalTokenSource, err := google.JWTConfigFromJSON(gcalData, calendar.CalendarScope)
 	if err != nil {
 		logrus.Fatalf("creating google calendar token source from file %s failed: %v", googleCalendarKeyfile, err)
 	}
@@ -151,7 +151,7 @@ func main() {
 	// If the user passed the once flag, just do the run once and exit.
 	if once {
 		run(tripitClient, gcalClient, calendarName)
-		logrus.Infof("Updated TripIt calendar entriesin Google calendar %s", calendarName)
+		logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
 		os.Exit(0)
 	}
 
@@ -168,19 +168,42 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 	if err != nil {
 		logrus.Fatalf("getting events from google calendar %s failed: %v", calendarName, err)
 	}
-	for _, e := range events.Items {
-		// We only care about TripIt events.
-		if strings.Contains(e.Description, "TripIt") || strings.Contains(e.Summary, "Flight") {
-			logrus.Infof("event: %#v", *e)
-		}
-	}
 
 	trips, err := getTripItEvents(tripitClient, 1, "true")
 	if err != nil {
 		logrus.Fatalf("getting tripit events failed: %v", err)
 	}
 
-	logrus.Infof("[%d] trips: %#v", len(trips), trips)
+	// Iterate over the trip and see if we already have a matching calendar event.
+	// If not make one and/or update the old one.
+	for _, trip := range trips {
+		var matchingEvent *calendar.Event
+		for _, e := range events.Items {
+			// We only care about TripIt events that match our tripID or segmentID.
+			if (strings.Contains(strings.ToLower(e.Description), "tripit") ||
+				strings.Contains(strings.ToLower(e.Summary), "flight")) &&
+				(strings.Contains(e.Description, trip.ID) ||
+					strings.Contains(e.Description, trip.SegmentID)) {
+				matchingEvent = e
+				break
+			}
+		}
+
+		if matchingEvent == nil {
+			logrus.Warnf("no event found for trip: %#v", trip)
+			continue
+		}
+
+		// Update our matching event.
+		matchingEvent.Summary = trip.Title
+		matchingEvent.Description = trip.Description
+		matchingEvent.Start = &trip.Start
+		matchingEvent.End = &trip.End
+		_, err := gcalClient.Events.Update(calendarName, matchingEvent.Id, matchingEvent).Do()
+		if err != nil {
+			logrus.Errorf("updating google calendar event %s failed: %v", matchingEvent.Id, err)
+		}
+	}
 }
 
 func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) ([]tripit.Event, error) {
@@ -233,7 +256,6 @@ func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) (
 	}
 
 	if pageNum < maxPage {
-		logrus.Infof("trips page %d is less than max page %d, so recursively adding trips...", pageNum, maxPage)
 		pageNum++
 
 		evs, err := getTripItEvents(tripitClient, pageNum, pastFilter)
