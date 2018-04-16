@@ -7,6 +7,11 @@ Bot to automatically create Google Calendar events from TripIt flight data.
 I have OCD about the layout of my calendar events so that is why I made my own
 bot.
 
+
+To use this, you must enable "Web Authentication" on your account. You can
+follow the steps to do that 
+[here](https://tripit.github.io/api/doc/v1/#authentication_section).
+
 ## Installation
 
 #### Binaries
