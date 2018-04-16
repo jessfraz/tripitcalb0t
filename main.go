@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -174,35 +175,86 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		}
 	}
 
+	trips, err := getTripItEvents(tripitClient, 1, "true")
+	if err != nil {
+		logrus.Fatalf("getting tripit events failed: %v", err)
+	}
+
+	logrus.Infof("[%d] trips: %#v", len(trips), trips)
+}
+
+func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) ([]tripit.Event, error) {
 	// Get a list of trips.
 	resp, err := tripitClient.ListTrips(
 		tripit.Filter{
 			Type:  tripit.FilterPast,
-			Value: "true",
+			Value: pastFilter,
 		},
 		tripit.Filter{
 			Type:  tripit.FilterIncludeObjects,
 			Value: "true",
+		},
+		tripit.Filter{
+			Type:  tripit.FilterPageNum,
+			Value: fmt.Sprintf("%d", page),
+		},
+		tripit.Filter{
+			Type:  tripit.FilterPageSize,
+			Value: "25",
 		})
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, fmt.Errorf("listing trips from TripIt failed: %v", err)
 	}
+
+	var events []tripit.Event
 
 	// Iterate over our flights and create/update calendar entries in Google calendar.
 	for _, flight := range resp.Flights {
 		// Create the events for the flight.
-		events, err := flight.GetFlightSegmentsAsEvents()
+		evs, err := flight.GetFlightSegmentsAsEvents()
 		if err != nil {
 			// Warn on error and continue iterating through the flights.
 			logrus.Warn(err)
 			continue
 		}
 
-		logrus.Infof("events: %#v", events)
-
-		// Create / Update a Google Calendar entry for each event.
-		// TODO(jessfraz): do this.
+		// Add to our events array.
+		events = append(events, evs...)
 	}
+
+	// Paginate.
+	pageNum, err := strconv.Atoi(resp.PageNum)
+	if err != nil {
+		return nil, err
+	}
+	maxPage, err := strconv.Atoi(resp.MaxPage)
+	if err != nil {
+		return nil, err
+	}
+
+	if pageNum < maxPage {
+		logrus.Infof("trips page %d is less than max page %d, so recursively adding trips...", pageNum, maxPage)
+		pageNum++
+
+		evs, err := getTripItEvents(tripitClient, pageNum, pastFilter)
+		if err != nil {
+			return nil, err
+		}
+
+		return append(events, evs...), nil
+	}
+
+	if pastFilter == "true" {
+		// Get future events as well.
+		evs, err := getTripItEvents(tripitClient, 1, "false")
+		if err != nil {
+			return nil, err
+		}
+
+		return append(events, evs...), nil
+	}
+
+	return events, nil
 }
 
 func usageAndExit(message string, exitCode int) {

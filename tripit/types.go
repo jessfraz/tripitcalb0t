@@ -32,20 +32,24 @@ type Response struct {
 	Warnings []Warning `json:"Warning,omitempty" xml:"Warning"` // optional
 
 	Activities     []Activity      `json:"ActivityObject,omitempty" xml:"ActivityObject"`     // optional
-	Flights        []Flight        `json:"AirObject,omitempty" xml:"AirObject"`               // optional
-	Cars           []Car           `json:"CarObject,omitempty" xml:"CarObject"`               // optional
+	Flights        Flights         `json:"AirObject,omitempty" xml:"AirObject"`               // optional
+	Cars           Cars            `json:"CarObject,omitempty" xml:"CarObject"`               // optional
 	Cruises        []Cruise        `json:"CruiseObject,omitempty" xml:"CruiseObject"`         // optional
 	Directions     []Directions    `json:"DirectionsObject,omitempty" xml:"DirectionsObject"` // optional
 	Lodging        []Lodging       `json:"LodgingObject,omitempty" xml:"LodgingObject"`       // optional
 	Maps           []Map           `json:"MapObject,omitempty" xml:"MapObject"`               // optional
-	Notes          []Note          `json:"NoteObject,omitempty" xml:"NoteObject"`             // optional
+	Notes          Notes           `json:"NoteObject,omitempty" xml:"NoteObject"`             // optional
 	Rails          []Rail          `json:"RailObject,omitempty" xml:"RailObject"`             // optional
 	Restaurants    []Restaurant    `json:"RestaurantObject,omitempty" xml:"RestaurantObject"` // optional
-	Transports     []Transport     `json:"TransportObject,omitempty" xml:"TransportObject"`   // optional
+	Transports     Transports      `json:"TransportObject,omitempty" xml:"TransportObject"`   // optional
 	Trips          []Trip          `json:"Trip,omitempty" xml:"Trip"`                         // optional
 	Weather        []Weather       `json:"WeatherObject,omitempty" xml:"WeatherObject"`       // optional
 	PointsPrograms []PointsProgram `json:"PointsProgram,omitempty" xml:"PointsProgram"`       // optional
 	Profiles       []Profile       `json:"Profile,omitempty" xml:"Profile"`                   // optional
+
+	PageNum  string `json:"page_num,omitempty"`
+	PageSize string `json:"page_size,omitempty"`
+	MaxPage  string `json:"max_page,omitempty"`
 }
 
 // Error is returned from TripIt on error conditions.
@@ -96,6 +100,30 @@ type Activity struct {
 	Participants         Travelers      `json:"Participant,omitempty"`               // optional
 	DetailTypeCode       DetailTypeCode `json:"detail_type_code,omitempty"`          // optional
 	LocationName         string         `json:"location_name,omitempty"`             // optional
+}
+
+// Cars is a group of Car objects.
+type Cars []Car
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Cars) UnmarshalJSON(b []byte) error {
+	var arr *[]Car
+	arr = (*[]Car)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Car, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Car contains information about rental cars. car cancellation remarks should be in restrictions. car pickup instructions should be in notes. car daily rate should be in booking_rate.
@@ -195,6 +223,30 @@ type Directions struct {
 	DateTime         DateTime `json:"DateTime,omitempty"`                  // optional
 	StartAddress     Address  `json:"StartAddress,omitempty"`              // optional
 	EndAddress       Address  `json:"EndAddress,omitempty"`                // optional
+}
+
+// Flights is a group of Flight objects.
+type Flights []Flight
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Flights) UnmarshalJSON(b []byte) error {
+	var arr *[]Flight
+	arr = (*[]Flight)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Flight, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Flight contains data about a flight.
@@ -358,6 +410,30 @@ type Map struct {
 	Address          Address  `json:"Address,omitempty"`                   // optional
 }
 
+// Notes is a group of Note objects.
+type Notes []Note
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Notes) UnmarshalJSON(b []byte) error {
+	var arr *[]Note
+	arr = (*[]Note)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Note, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
 // Note contains information about notes added by the traveler.
 type Note struct {
 	ID               string         `json:"id,omitempty"`                        // optional, read-only
@@ -377,32 +453,56 @@ type Note struct {
 
 // Rail contains information about trains.
 type Rail struct {
-	ID                   string        `json:"id,omitempty"`                        // optional, read-only
-	TripID               string        `json:"trip_id,omitempty"`                   // optional
-	IsClientTraveler     bool          `json:"is_client_traveler,string,omitempty"` // optional, read-only
-	RelativeURL          string        `json:"relative_url,omitempty"`              // optional, read-only
-	DisplayName          string        `json:"display_name,omitempty"`              // optional
-	Images               []Image       `json:"Image,omitempty"`                     // optional
-	CancellationDateTime DateTime      `json:"CancellationDateTime,omitempty"`      // optional
-	BookingDate          string        `json:"booking_date,omitempty"`              // optional, xs:date
-	BookingRate          string        `json:"booking_rate,omitempty"`              // optional
-	BookingSiteConfNum   string        `json:"booking_site_conf_num,omitempty"`     // optional
-	BookingSiteName      string        `json:"booking_site_name,omitempty"`         // optional
-	BookingSitePhone     string        `json:"booking_site_phone,omitempty"`        // optional
-	BookingSiteURL       string        `json:"booking_site_url,omitempty"`          // optional
-	RecordLocator        string        `json:"record_locator,omitempty"`            // optional
-	SupplierConfNum      string        `json:"supplier_conf_num,omitempty"`         // optional
-	SupplierContact      string        `json:"supplier_contact,omitempty"`          // optional
-	SupplierEmailAddress string        `json:"supplier_email_address,omitempty"`    // optional
-	SupplierName         string        `json:"supplier_name,omitempty"`             // optional
-	SupplierPhone        string        `json:"supplier_phone,omitempty"`            // optional
-	SupplierURL          string        `json:"supplier_url,omitempty"`              // optional
-	IsPurchased          bool          `json:"is_purchased,string,omitempty"`       // optional
-	Notes                string        `json:"notes,omitempty"`                     // optional
-	Restrictions         string        `json:"restrictions,omitempty"`              // optional
-	TotalCost            string        `json:"total_cost,omitempty"`                // optional
-	Segments             []RailSegment `json:"Segment,omitempty"`
-	Travelers            Travelers     `json:"Traveler,omitempty"` // optional
+	ID                   string       `json:"id,omitempty"`                        // optional, read-only
+	TripID               string       `json:"trip_id,omitempty"`                   // optional
+	IsClientTraveler     bool         `json:"is_client_traveler,string,omitempty"` // optional, read-only
+	RelativeURL          string       `json:"relative_url,omitempty"`              // optional, read-only
+	DisplayName          string       `json:"display_name,omitempty"`              // optional
+	Images               []Image      `json:"Image,omitempty"`                     // optional
+	CancellationDateTime DateTime     `json:"CancellationDateTime,omitempty"`      // optional
+	BookingDate          string       `json:"booking_date,omitempty"`              // optional, xs:date
+	BookingRate          string       `json:"booking_rate,omitempty"`              // optional
+	BookingSiteConfNum   string       `json:"booking_site_conf_num,omitempty"`     // optional
+	BookingSiteName      string       `json:"booking_site_name,omitempty"`         // optional
+	BookingSitePhone     string       `json:"booking_site_phone,omitempty"`        // optional
+	BookingSiteURL       string       `json:"booking_site_url,omitempty"`          // optional
+	RecordLocator        string       `json:"record_locator,omitempty"`            // optional
+	SupplierConfNum      string       `json:"supplier_conf_num,omitempty"`         // optional
+	SupplierContact      string       `json:"supplier_contact,omitempty"`          // optional
+	SupplierEmailAddress string       `json:"supplier_email_address,omitempty"`    // optional
+	SupplierName         string       `json:"supplier_name,omitempty"`             // optional
+	SupplierPhone        string       `json:"supplier_phone,omitempty"`            // optional
+	SupplierURL          string       `json:"supplier_url,omitempty"`              // optional
+	IsPurchased          bool         `json:"is_purchased,string,omitempty"`       // optional
+	Notes                string       `json:"notes,omitempty"`                     // optional
+	Restrictions         string       `json:"restrictions,omitempty"`              // optional
+	TotalCost            string       `json:"total_cost,omitempty"`                // optional
+	Segments             RailSegments `json:"Segment,omitempty"`
+	Travelers            Travelers    `json:"Traveler,omitempty"` // optional
+}
+
+// RailSegments is a group of RailSegment objects.
+type RailSegments []RailSegment
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *RailSegments) UnmarshalJSON(b []byte) error {
+	var arr *[]RailSegment
+	arr = (*[]RailSegment)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]RailSegment, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // RailSegment contains details about an individual train ride.
@@ -459,34 +559,82 @@ type Restaurant struct {
 	PriceRange           string   `json:"price_range,omitempty"`               // optional
 }
 
+// Transports is a group of Transport objects.
+type Transports []Transport
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Transports) UnmarshalJSON(b []byte) error {
+	var arr *[]Transport
+	arr = (*[]Transport)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Transport, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
 // Transport contains details about other forms of transport like bus rides.
 type Transport struct {
-	ID                   string             `json:"id,omitempty"`                        // optional, read-only
-	TripID               string             `json:"trip_id,omitempty"`                   // optional
-	IsClientTraveler     bool               `json:"is_client_traveler,string,omitempty"` // optional, read-only
-	RelativeURL          string             `json:"relative_url,omitempty"`              // optional, read-only
-	DisplayName          string             `json:"display_name,omitempty"`              // optional
-	Images               []Image            `json:"Image,omitempty"`                     // optional
-	CancellationDateTime DateTime           `json:"CancellationDateTime,omitempty"`      // optional
-	BookingDate          string             `json:"booking_date,omitempty"`              // optional, xs:date
-	BookingRate          string             `json:"booking_rate,omitempty"`              // optional
-	BookingSiteConfNum   string             `json:"booking_site_conf_num,omitempty"`     // optional
-	BookingSiteName      string             `json:"booking_site_name,omitempty"`         // optional
-	BookingSitePhone     string             `json:"booking_site_phone,omitempty"`        // optional
-	BookingSiteURL       string             `json:"booking_site_url,omitempty"`          // optional
-	RecordLocator        string             `json:"record_locator,omitempty"`            // optional
-	SupplierConfNum      string             `json:"supplier_conf_num,omitempty"`         // optional
-	SupplierContact      string             `json:"supplier_contact,omitempty"`          // optional
-	SupplierEmailAddress string             `json:"supplier_email_address,omitempty"`    // optional
-	SupplierName         string             `json:"supplier_name,omitempty"`             // optional
-	SupplierPhone        string             `json:"supplier_phone,omitempty"`            // optional
-	SupplierURL          string             `json:"supplier_url,omitempty"`              // optional
-	IsPurchased          bool               `json:"is_purchased,string,omitempty"`       // optional
-	Notes                string             `json:"notes,omitempty"`                     // optional
-	Restrictions         string             `json:"restrictions,omitempty"`              // optional
-	TotalCost            string             `json:"total_cost,omitempty"`                // optional
-	Segments             []TransportSegment `json:"Segment,omitempty"`
-	Travelers            Travelers          `json:"Traveler,omitempty"` // optional
+	ID                   string            `json:"id,omitempty"`                        // optional, read-only
+	TripID               string            `json:"trip_id,omitempty"`                   // optional
+	IsClientTraveler     bool              `json:"is_client_traveler,string,omitempty"` // optional, read-only
+	RelativeURL          string            `json:"relative_url,omitempty"`              // optional, read-only
+	DisplayName          string            `json:"display_name,omitempty"`              // optional
+	Images               []Image           `json:"Image,omitempty"`                     // optional
+	CancellationDateTime DateTime          `json:"CancellationDateTime,omitempty"`      // optional
+	BookingDate          string            `json:"booking_date,omitempty"`              // optional, xs:date
+	BookingRate          string            `json:"booking_rate,omitempty"`              // optional
+	BookingSiteConfNum   string            `json:"booking_site_conf_num,omitempty"`     // optional
+	BookingSiteName      string            `json:"booking_site_name,omitempty"`         // optional
+	BookingSitePhone     string            `json:"booking_site_phone,omitempty"`        // optional
+	BookingSiteURL       string            `json:"booking_site_url,omitempty"`          // optional
+	RecordLocator        string            `json:"record_locator,omitempty"`            // optional
+	SupplierConfNum      string            `json:"supplier_conf_num,omitempty"`         // optional
+	SupplierContact      string            `json:"supplier_contact,omitempty"`          // optional
+	SupplierEmailAddress string            `json:"supplier_email_address,omitempty"`    // optional
+	SupplierName         string            `json:"supplier_name,omitempty"`             // optional
+	SupplierPhone        string            `json:"supplier_phone,omitempty"`            // optional
+	SupplierURL          string            `json:"supplier_url,omitempty"`              // optional
+	IsPurchased          bool              `json:"is_purchased,string,omitempty"`       // optional
+	Notes                string            `json:"notes,omitempty"`                     // optional
+	Restrictions         string            `json:"restrictions,omitempty"`              // optional
+	TotalCost            string            `json:"total_cost,omitempty"`                // optional
+	Segments             TransportSegments `json:"Segment,omitempty"`
+	Travelers            Travelers         `json:"Traveler,omitempty"` // optional
+}
+
+// TransportSegments is a group of TransportSegment objects.
+type TransportSegments []TransportSegment
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *TransportSegments) UnmarshalJSON(b []byte) error {
+	var arr *[]TransportSegment
+	arr = (*[]TransportSegment)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]TransportSegment, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // TransportSegment contains details about indivual transport rides.
@@ -611,8 +759,27 @@ type ProfileEmailAddress struct {
 }
 
 // GroupMemberships contains a list of groups that the user is a member of.
-type GroupMemberships struct {
-	Groups []Group `json:"Group,omitempty" xml:"Group"` // optional, read-only
+type GroupMemberships []Group
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *GroupMemberships) UnmarshalJSON(b []byte) error {
+	var arr *[]Group
+	arr = (*[]Group)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Group, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Group contains data about a group in TripIt. All Group elements are read-only.

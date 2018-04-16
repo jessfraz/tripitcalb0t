@@ -39,6 +39,10 @@ const (
 	FilterTripID TypeFilter = "trip_id" // valid on object. Values: integer trip id
 	// FilterType is the filter type for filtering by object type.
 	FilterType TypeFilter = "type" // valid on object. Values: all object types
+	// FilterPageNum is the filter type for the page number.
+	FilterPageNum TypeFilter = "page_num"
+	// FilterPageSize is the filter type for the page size.
+	FilterPageSize TypeFilter = "page_size"
 
 	// TypeActivity is the activity object type.
 	TypeActivity Type = "activity"
