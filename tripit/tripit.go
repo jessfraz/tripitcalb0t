@@ -100,9 +100,8 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*Response
 	}
 
 	// Log errors on the API errors.
-	// TODO(jessfraz): print the float better.
 	for _, e := range r.Errors {
-		logrus.Errorf("[%s] %s code -> %d, detailed code -> %d: %s", e.Timestamp, e.EntityType, e.Code, e.DetailedErrorCode, e.Description)
+		logrus.Errorf("[%s] %s code -> %d, detailed code -> %f: %s", e.Timestamp, e.EntityType, e.Code, e.DetailedErrorCode, e.Description)
 	}
 
 	return &r, nil
