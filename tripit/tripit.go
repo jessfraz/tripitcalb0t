@@ -84,6 +84,10 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*Response
 
 		return nil, fmt.Errorf("%s request to %s returned status code %d: message -> %s\nbody -> %s", method, uri, resp.StatusCode, message, string(body))
 	}
+	/*body, _ := ioutil.ReadAll(resp.Body)
+	var out bytes.Buffer
+	json.Indent(&out, body, "", "  ")
+	logrus.Fatalf("body: %s", string(body))*/
 
 	// Decode the response into a TripIt Response object.
 	var r Response

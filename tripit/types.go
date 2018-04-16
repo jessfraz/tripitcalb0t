@@ -1,6 +1,7 @@
 package tripit
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -92,51 +93,51 @@ type Activity struct {
 	StartDateTime        DateTime       `json:"StartDateTime,omitempty"`             // optional
 	EndTime              string         `json:"end_time,omitempty"`                  // optional, xs:time
 	Address              Address        `json:"Address,omitempty"`                   // optional
-	Participants         []Traveler     `json:"Participant,omitempty"`               // optional
+	Participants         Travelers      `json:"Participant,omitempty"`               // optional
 	DetailTypeCode       DetailTypeCode `json:"detail_type_code,omitempty"`          // optional
 	LocationName         string         `json:"location_name,omitempty"`             // optional
 }
 
 // Car contains information about rental cars. car cancellation remarks should be in restrictions. car pickup instructions should be in notes. car daily rate should be in booking_rate.
 type Car struct {
-	ID                   string     `json:"id,omitempty" xml:"id"`                                         // optional, read-only
-	TripID               string     `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
-	IsClientTraveler     bool       `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
-	RelativeURL          string     `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
-	DisplayName          string     `json:"display_name,omitempty" xml:"display_name"`                     // optional
-	Images               []Image    `json:"Image,omitempty" xml:"Image"`                                   // optional
-	CancellationDateTime DateTime   `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
-	BookingDate          string     `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
-	BookingRate          string     `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
-	BookingSiteConfNum   string     `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
-	BookingSiteName      string     `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
-	BookingSitePhone     string     `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
-	BookingSiteURL       string     `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
-	RecordLocator        string     `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
-	SupplierConfNum      string     `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
-	SupplierContact      string     `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
-	SupplierEmailAddress string     `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
-	SupplierName         string     `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
-	SupplierPhone        string     `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
-	SupplierURL          string     `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
-	IsPurchased          bool       `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
-	Notes                string     `json:"notes,omitempty" xml:"notes"`                                   // optional
-	Restrictions         string     `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
-	TotalCost            string     `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
-	StartDateTime        DateTime   `json:"StartDateTime,omitempty" xml:"StartDateTime"`                   // optional
-	EndDateTime          DateTime   `json:"EndDateTime,omitempty" xml:"EndDateTime"`                       // optional
-	StartLocationAddress Address    `json:"StartLocationAddress,omitempty" xml:"StartLocationAddress"`     // optional
-	EndLocationAddress   Address    `json:"EndLocationAddress,omitempty" xml:"EndLocationAddress"`         // optional
-	Drivers              []Traveler `json:"Driver,omitempty" xml:"Driver"`                                 // optional
-	StartLocationHours   string     `json:"start_location_hours,omitempty" xml:"start_location_hours"`     // optional
-	StartLocationName    string     `json:"start_location_name,omitempty" xml:"start_location_name"`       // optional
-	StartLocationPhone   string     `json:"start_location_phone,omitempty" xml:"start_location_phone"`     // optional
-	EndLocationHours     string     `json:"end_location_hours,omitempty" xml:"end_location_hours"`         // optional
-	EndLocationName      string     `json:"end_location_name,omitempty" xml:"end_location_name"`           // optional
-	EndLocationPhone     string     `json:"end_location_phone,omitempty" xml:"end_location_phone"`         // optional
-	CarDescription       string     `json:"car_description,omitempty" xml:"car_description"`               // optional
-	CarType              string     `json:"car_type,omitempty" xml:"car_type"`                             // optional
-	MileageCharges       string     `json:"mileage_charges,omitempty" xml:"mileage_charges"`               // optional
+	ID                   string    `json:"id,omitempty" xml:"id"`                                         // optional, read-only
+	TripID               string    `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
+	IsClientTraveler     bool      `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
+	RelativeURL          string    `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
+	DisplayName          string    `json:"display_name,omitempty" xml:"display_name"`                     // optional
+	Images               []Image   `json:"Image,omitempty" xml:"Image"`                                   // optional
+	CancellationDateTime DateTime  `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
+	BookingDate          string    `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
+	BookingRate          string    `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
+	BookingSiteConfNum   string    `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
+	BookingSiteName      string    `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
+	BookingSitePhone     string    `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
+	BookingSiteURL       string    `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
+	RecordLocator        string    `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
+	SupplierConfNum      string    `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
+	SupplierContact      string    `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
+	SupplierEmailAddress string    `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
+	SupplierName         string    `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
+	SupplierPhone        string    `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
+	SupplierURL          string    `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
+	IsPurchased          bool      `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
+	Notes                string    `json:"notes,omitempty" xml:"notes"`                                   // optional
+	Restrictions         string    `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
+	TotalCost            string    `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
+	StartDateTime        DateTime  `json:"StartDateTime,omitempty" xml:"StartDateTime"`                   // optional
+	EndDateTime          DateTime  `json:"EndDateTime,omitempty" xml:"EndDateTime"`                       // optional
+	StartLocationAddress Address   `json:"StartLocationAddress,omitempty" xml:"StartLocationAddress"`     // optional
+	EndLocationAddress   Address   `json:"EndLocationAddress,omitempty" xml:"EndLocationAddress"`         // optional
+	Drivers              Travelers `json:"Driver,omitempty" xml:"Driver"`                                 // optional
+	StartLocationHours   string    `json:"start_location_hours,omitempty" xml:"start_location_hours"`     // optional
+	StartLocationName    string    `json:"start_location_name,omitempty" xml:"start_location_name"`       // optional
+	StartLocationPhone   string    `json:"start_location_phone,omitempty" xml:"start_location_phone"`     // optional
+	EndLocationHours     string    `json:"end_location_hours,omitempty" xml:"end_location_hours"`         // optional
+	EndLocationName      string    `json:"end_location_name,omitempty" xml:"end_location_name"`           // optional
+	EndLocationPhone     string    `json:"end_location_phone,omitempty" xml:"end_location_phone"`         // optional
+	CarDescription       string    `json:"car_description,omitempty" xml:"car_description"`               // optional
+	CarType              string    `json:"car_type,omitempty" xml:"car_type"`                             // optional
+	MileageCharges       string    `json:"mileage_charges,omitempty" xml:"mileage_charges"`               // optional
 }
 
 // Cruise contains information about cruises.
@@ -166,7 +167,7 @@ type Cruise struct {
 	Restrictions         string          `json:"restrictions,omitempty"`              // optional
 	TotalCost            string          `json:"total_cost,omitempty"`                // optional
 	Segments             []CruiseSegment `json:"Segment,omitempty"`
-	Travelers            []Traveler      `json:"Traveler,omitempty"`     // optional
+	Travelers            Travelers       `json:"Traveler,omitempty"`     // optional
 	CabinNumber          string          `json:"cabin_number,omitempty"` // optional
 	CabinType            string          `json:"cabin_type,omitempty"`   // optional
 	Dining               string          `json:"dining,omitempty"`       // optional
@@ -198,32 +199,56 @@ type Directions struct {
 
 // Flight contains data about a flight.
 type Flight struct {
-	ID                   string          `json:"id,omitempty" xml:"id"`                                         // optional, read-only
-	TripID               string          `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
-	IsClientTraveler     bool            `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
-	RelativeURL          string          `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
-	DisplayName          string          `json:"display_name,omitempty" xml:"display_name"`                     // optional
-	Images               []Image         `json:"Image,omitempty" xml:"Image"`                                   // optional
-	CancellationDateTime DateTime        `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
-	BookingDate          string          `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
-	BookingRate          string          `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
-	BookingSiteConfNum   string          `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
-	BookingSiteName      string          `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
-	BookingSitePhone     string          `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
-	BookingSiteURL       string          `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
-	RecordLocator        string          `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
-	SupplierConfNum      string          `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
-	SupplierContact      string          `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
-	SupplierEmailAddress string          `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
-	SupplierName         string          `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
-	SupplierPhone        string          `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
-	SupplierURL          string          `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
-	IsPurchased          bool            `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
-	Notes                string          `json:"notes,omitempty" xml:"notes"`                                   // optional
-	Restrictions         string          `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
-	TotalCost            string          `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
-	Segments             []FlightSegment `json:"Segment,omitempty" xml:"Segment"`
-	Travelers            []Traveler      `json:"Traveler,omitempty" xml:"Traveler"` // optional
+	ID                   string         `json:"id,omitempty" xml:"id"`                                         // optional, read-only
+	TripID               string         `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
+	IsClientTraveler     bool           `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
+	RelativeURL          string         `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
+	DisplayName          string         `json:"display_name,omitempty" xml:"display_name"`                     // optional
+	Images               []Image        `json:"Image,omitempty" xml:"Image"`                                   // optional
+	CancellationDateTime DateTime       `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
+	BookingDate          string         `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
+	BookingRate          string         `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
+	BookingSiteConfNum   string         `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
+	BookingSiteName      string         `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
+	BookingSitePhone     string         `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
+	BookingSiteURL       string         `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
+	RecordLocator        string         `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
+	SupplierConfNum      string         `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
+	SupplierContact      string         `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
+	SupplierEmailAddress string         `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
+	SupplierName         string         `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
+	SupplierPhone        string         `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
+	SupplierURL          string         `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
+	IsPurchased          bool           `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
+	Notes                string         `json:"notes,omitempty" xml:"notes"`                                   // optional
+	Restrictions         string         `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
+	TotalCost            string         `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
+	Segments             FlightSegments `json:"Segment,omitempty" xml:"Segment"`
+	Travelers            Travelers      `json:"Traveler,omitempty" xml:"Traveler"` // optional
+}
+
+// FlightSegments is a group of FlightSegment objects.
+type FlightSegments []FlightSegment
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *FlightSegments) UnmarshalJSON(b []byte) error {
+	var arr *[]FlightSegment
+	arr = (*[]FlightSegment)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]FlightSegment, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // FlightSegment contains details about individual flights.
@@ -288,37 +313,37 @@ type FlightStatus struct {
 
 // Lodging contains information about hotels or other lodging. hotel cancellation remarks should be in restrictions. hotel room description should be in notes. hotel average daily rate should be in booking_rate.
 type Lodging struct {
-	ID                   string     `json:"id,omitempty" xml:"id"`                                         // optional, read-only
-	TripID               string     `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
-	IsClientTraveler     bool       `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
-	RelativeURL          string     `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
-	DisplayName          string     `json:"display_name,omitempty" xml:"display_name"`                     // optional
-	Images               []Image    `json:"Image,omitempty" xml:"Image"`                                   // optional
-	CancellationDateTime DateTime   `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
-	BookingDate          string     `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
-	BookingRate          string     `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
-	BookingSiteConfNum   string     `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
-	BookingSiteName      string     `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
-	BookingSitePhone     string     `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
-	BookingSiteURL       string     `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
-	RecordLocator        string     `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
-	SupplierConfNum      string     `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
-	SupplierContact      string     `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
-	SupplierEmailAddress string     `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
-	SupplierName         string     `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
-	SupplierPhone        string     `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
-	SupplierURL          string     `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
-	IsPurchased          bool       `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
-	Notes                string     `json:"notes,omitempty" xml:"notes"`                                   // optional
-	Restrictions         string     `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
-	TotalCost            string     `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
-	StartDateTime        DateTime   `json:"StartDateTime,omitempty" xml:"StartDateTime"`                   // optional
-	EndDateTime          DateTime   `json:"EndDateTime,omitempty" xml:"EndDateTime"`                       // optional
-	Address              Address    `json:"Address,omitempty" xml:"Address"`                               // optional
-	Guests               []Traveler `json:"Guest,omitempty" xml:"Guest"`                                   // optional
-	NumberGuests         string     `json:"number_guests,omitempty" xml:"number_guests"`                   // optional
-	NumberRooms          string     `json:"number_rooms,omitempty" xml:"number_rooms"`                     // optional
-	RoomType             string     `json:"room_type,omitempty" xml:"room_type"`                           // optional
+	ID                   string    `json:"id,omitempty" xml:"id"`                                         // optional, read-only
+	TripID               string    `json:"trip_id,omitempty" xml:"trip_id"`                               // optional
+	IsClientTraveler     bool      `json:"is_client_traveler,string,omitempty" xml:"is_client_traveler"`  // optional, read-only
+	RelativeURL          string    `json:"relative_url,omitempty" xml:"relative_url"`                     // optional, read-only
+	DisplayName          string    `json:"display_name,omitempty" xml:"display_name"`                     // optional
+	Images               []Image   `json:"Image,omitempty" xml:"Image"`                                   // optional
+	CancellationDateTime DateTime  `json:"CancellationDateTime,omitempty" xml:"CancellationDateTime"`     // optional
+	BookingDate          string    `json:"booking_date,omitempty" xml:"booking_date"`                     // optional, xs:date
+	BookingRate          string    `json:"booking_rate,omitempty" xml:"booking_rate"`                     // optional
+	BookingSiteConfNum   string    `json:"booking_site_conf_num,omitempty" xml:"booking_site_conf_num"`   // optional
+	BookingSiteName      string    `json:"booking_site_name,omitempty" xml:"booking_site_name"`           // optional
+	BookingSitePhone     string    `json:"booking_site_phone,omitempty" xml:"booking_site_phone"`         // optional
+	BookingSiteURL       string    `json:"booking_site_url,omitempty" xml:"booking_site_url"`             // optional
+	RecordLocator        string    `json:"record_locator,omitempty" xml:"record_locator"`                 // optional
+	SupplierConfNum      string    `json:"supplier_conf_num,omitempty" xml:"supplier_conf_num"`           // optional
+	SupplierContact      string    `json:"supplier_contact,omitempty" xml:"supplier_contact"`             // optional
+	SupplierEmailAddress string    `json:"supplier_email_address,omitempty" xml:"supplier_email_address"` // optional
+	SupplierName         string    `json:"supplier_name,omitempty" xml:"supplier_name"`                   // optional
+	SupplierPhone        string    `json:"supplier_phone,omitempty" xml:"supplier_phone"`                 // optional
+	SupplierURL          string    `json:"supplier_url,omitempty" xml:"supplier_url"`                     // optional
+	IsPurchased          bool      `json:"is_purchased,string,omitempty" xml:"is_purchased"`              // optional
+	Notes                string    `json:"notes,omitempty" xml:"notes"`                                   // optional
+	Restrictions         string    `json:"restrictions,omitempty" xml:"restrictions"`                     // optional
+	TotalCost            string    `json:"total_cost,omitempty" xml:"total_cost"`                         // optional
+	StartDateTime        DateTime  `json:"StartDateTime,omitempty" xml:"StartDateTime"`                   // optional
+	EndDateTime          DateTime  `json:"EndDateTime,omitempty" xml:"EndDateTime"`                       // optional
+	Address              Address   `json:"Address,omitempty" xml:"Address"`                               // optional
+	Guests               Travelers `json:"Guest,omitempty" xml:"Guest"`                                   // optional
+	NumberGuests         string    `json:"number_guests,omitempty" xml:"number_guests"`                   // optional
+	NumberRooms          string    `json:"number_rooms,omitempty" xml:"number_rooms"`                     // optional
+	RoomType             string    `json:"room_type,omitempty" xml:"room_type"`                           // optional
 }
 
 // Map contains addresses to show on a map.
@@ -377,7 +402,7 @@ type Rail struct {
 	Restrictions         string        `json:"restrictions,omitempty"`              // optional
 	TotalCost            string        `json:"total_cost,omitempty"`                // optional
 	Segments             []RailSegment `json:"Segment,omitempty"`
-	Travelers            []Traveler    `json:"Traveler,omitempty"` // optional
+	Travelers            Travelers     `json:"Traveler,omitempty"` // optional
 }
 
 // RailSegment contains details about an individual train ride.
@@ -461,7 +486,7 @@ type Transport struct {
 	Restrictions         string             `json:"restrictions,omitempty"`              // optional
 	TotalCost            string             `json:"total_cost,omitempty"`                // optional
 	Segments             []TransportSegment `json:"Segment,omitempty"`
-	Travelers            []Traveler         `json:"Traveler,omitempty"` // optional
+	Travelers            Travelers          `json:"Traveler,omitempty"` // optional
 }
 
 // TransportSegment contains details about indivual transport rides.
@@ -631,6 +656,30 @@ type Image struct {
 	URL     string `json:"url" xml:"url"`
 }
 
+// Travelers is a group of Traveler objects.
+type Travelers []Traveler
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Travelers) UnmarshalJSON(b []byte) error {
+	var arr *[]Traveler
+	arr = (*[]Traveler)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Traveler, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
 // Traveler contains information about a traveler.
 type Traveler struct {
 	FirstName                string `json:"first_name,omitempty" xml:"first_name"`                                 // optional
@@ -659,8 +708,27 @@ type ClosenessMatchAttributes struct {
 }
 
 // Invitees are people invited to view a trip.
-type Invitees struct {
-	Invitees []Invitee `json:"Invitee,omitempty" xml:"Invitee"` // optional, TripInvitees are read-only
+type Invitees []Invitee
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Invitees) UnmarshalJSON(b []byte) error {
+	var arr *[]Invitee
+	arr = (*[]Invitee)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Invitee, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Invitee stores attributes about invitees to a trip. All Invitee elements are read-only.

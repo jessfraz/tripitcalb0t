@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"os/user"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -148,35 +149,29 @@ func main() {
 
 	// If the user passed the once flag, just do the run once and exit.
 	if once {
-		run(tripitClient, gcalClient)
-		logrus.Info("Updated TripIt calendar entries")
+		run(tripitClient, gcalClient, calendarName)
+		logrus.Infof("Updated TripIt calendar entriesin Google calendar %s", calendarName)
 		os.Exit(0)
 	}
 
-	logrus.Infof("Starting bot to update TripIt calendar entries every %s", interval)
+	logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
 	for range ticker.C {
-		run(tripitClient, gcalClient)
+		run(tripitClient, gcalClient, calendarName)
 	}
 }
 
-func run(tripitClient *tripit.Client, gcalClient *calendar.Service) {
-	// Get a list of calendars.
-	calendars, err := gcalClient.CalendarList.List().Do()
-	if err != nil {
-		logrus.Fatalf("getting calendars from google calendar failed: %v", err)
-	}
-	for _, cal := range calendars.Items {
-		logrus.Infof("calendar: %#v", *cal)
-	}
-
-	// Get a list of events.
-	t := time.Now().Format(time.RFC3339)
-	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
+func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string) {
+	// Get a list of events from Google calendar.
+	t := time.Now().AddDate(-3, 0, 0).Format(time.RFC3339)
+	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(2500).OrderBy("startTime").Do()
 	if err != nil {
 		logrus.Fatalf("getting events from google calendar %s failed: %v", calendarName, err)
 	}
 	for _, e := range events.Items {
-		logrus.Infof("event: %#v", *e)
+		// We only care about TripIt events.
+		if strings.Contains(e.Description, "TripIt") || strings.Contains(e.Summary, "Flight") {
+			logrus.Infof("event: %#v", *e)
+		}
 	}
 
 	// Get a list of trips.
