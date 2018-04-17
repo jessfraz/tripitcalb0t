@@ -188,9 +188,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 			// We only care about TripIt events that match our tripID or segmentID.
 			if (strings.Contains(strings.ToLower(e.Description), "tripit") ||
 				strings.Contains(strings.ToLower(e.Summary), "flight")) &&
-				(strings.Contains(e.Description, trip.ID) ||
-					strings.Contains(e.Description, trip.SegmentID) ||
-					strings.Contains(e.Description, trip.ConfirmationNumber)) {
+				strings.Contains(e.Description, trip.SegmentID) {
 				matchingEvent = e
 				break
 			}
