@@ -164,8 +164,8 @@ func main() {
 
 func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string) {
 	// Get a list of events from Google calendar.
-	t := time.Now().AddDate(-3, 0, 0).Format(time.RFC3339)
-	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(2500).OrderBy("startTime").Q("Flight").Do()
+	t := time.Now().AddDate(-4, 0, 0).Format(time.RFC3339)
+	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).OrderBy("startTime").Q("Flight").MaxResults(2500).Do()
 	if err != nil {
 		logrus.Fatalf("getting events from google calendar %s failed: %v", calendarName, err)
 	}
