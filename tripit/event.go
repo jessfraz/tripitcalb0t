@@ -37,14 +37,14 @@ View and/or edit details of this trip: https://www.tripit.com/trip/show/id/%s`
 // Event holds the data we will use when creating calendar events for flights, activities, and other
 // TripIt API objects.
 type Event struct {
-	Title             string
-	Description       string
-	LocationLatitude  float64
-	LocationLongitude float64
-	Start             calendar.EventDateTime
-	End               calendar.EventDateTime
-	ID                string
-	SegmentID         string
+	Title              string
+	Description        string
+	AirportCode        string
+	Start              calendar.EventDateTime
+	End                calendar.EventDateTime
+	ID                 string
+	SegmentID          string
+	ConfirmationNumber string
 }
 
 // GetFlightSegmentsAsEvents returns an Event object for each of the
@@ -99,16 +99,23 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 			strings.TrimPrefix(f.RelativeURL, "/"),
 			f.TripID)
 
+		var confirmationNumber string
+		if f.SupplierConfNum != "" {
+			confirmationNumber = f.SupplierConfNum
+		} else if f.BookingSiteConfNum != "" {
+			confirmationNumber = f.BookingSiteConfNum
+		}
+
 		// Append the event to our events array.
 		events = append(events, Event{
-			Title:             fmt.Sprintf("Flight to %s", segment.EndCityName),
-			Description:       description,
-			LocationLatitude:  segment.StartAirportLatitude,
-			LocationLongitude: segment.StartAirportLongitude,
-			Start:             start,
-			End:               end,
-			ID:                f.TripID,
-			SegmentID:         segment.ID,
+			Title:              fmt.Sprintf("Flight to %s", segment.EndCityName),
+			Description:        description,
+			AirportCode:        segment.StartAirportCode,
+			Start:              start,
+			End:                end,
+			ID:                 f.TripID,
+			SegmentID:          segment.ID,
+			ConfirmationNumber: confirmationNumber,
 		})
 	}
 

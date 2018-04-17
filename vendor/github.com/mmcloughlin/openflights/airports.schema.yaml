@@ -1,0 +1,34 @@
+name: Airport
+doc: Airport represents an airport.
+collection_doc: Airports is a list of all airports in the OpenFlights dataset.
+fields:
+  - null # Airport ID
+  - name: Name
+    doc: Airport name.
+    type: string
+  - name: City
+    doc: Main city served by airport.
+    type: string
+  - name: Country
+    doc: Country or territory where airport is located.
+    type: string
+  - name: IATA
+    doc: 3-letter IATA code. Empty if not assigned/unknown.
+    type: string
+  - name: ICAO
+    doc: 4-letter ICAO code.
+    type: string
+  - name: Latitude
+    doc: Latitude in decimal degrees.
+    type: float64
+  - name: Longitude
+    doc: Longitude in decimal degrees.
+    type: float64
+  - name: Altitude
+    doc: Altitude in feet.
+    type: float64
+  - null # Timezone
+  - null # DST
+  - null # tz (Olsen) format
+  - null # Type
+  - null # Source

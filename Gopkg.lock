@@ -14,6 +14,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/mmcloughlin/openflights"
+  packages = ["."]
+  revision = "257f09e6e50cc44958d87c23fba5d10ebf463d69"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
@@ -32,7 +38,7 @@
     "context",
     "context/ctxhttp"
   ]
-  revision = "a35a21de978d84ffc92f010a153705b170b2f9d1"
+  revision = "8d16fa6dc9a85c1cd3ed24ad08ff21cf94f10888"
 
 [[projects]]
   branch = "master"
@@ -86,6 +92,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "790c867131445a644e11a3509f3e1b182ae0a4d4f135f69cef0b87d01d675a1e"
+  inputs-digest = "ceb21c22178027e78aa5cc76a95edd4f319413333bd156498438176fc6022f65"
   solver-name = "gps-cdcl"
   solver-version = 1

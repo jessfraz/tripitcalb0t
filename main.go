@@ -16,6 +16,7 @@ import (
 
 	"github.com/jessfraz/tripitcalb0t/tripit"
 	"github.com/jessfraz/tripitcalb0t/version"
+	"github.com/mmcloughlin/openflights"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/google"
 	calendar "google.golang.org/api/calendar/v3"
@@ -164,7 +165,7 @@ func main() {
 func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string) {
 	// Get a list of events from Google calendar.
 	t := time.Now().AddDate(-3, 0, 0).Format(time.RFC3339)
-	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(2500).OrderBy("startTime").Do()
+	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(2500).OrderBy("startTime").Q("Flight").Do()
 	if err != nil {
 		logrus.Fatalf("getting events from google calendar %s failed: %v", calendarName, err)
 	}
@@ -177,20 +178,46 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 	// Iterate over the trip and see if we already have a matching calendar event.
 	// If not make one and/or update the old one.
 	for _, trip := range trips {
+		if trip.ConfirmationNumber == "" {
+			logrus.Warnf("skipping trip that has no confirmation number: %#v", trip)
+			continue
+		}
+
 		var matchingEvent *calendar.Event
 		for _, e := range events.Items {
 			// We only care about TripIt events that match our tripID or segmentID.
 			if (strings.Contains(strings.ToLower(e.Description), "tripit") ||
 				strings.Contains(strings.ToLower(e.Summary), "flight")) &&
 				(strings.Contains(e.Description, trip.ID) ||
-					strings.Contains(e.Description, trip.SegmentID)) {
+					strings.Contains(e.Description, trip.SegmentID) ||
+					strings.Contains(e.Description, trip.ConfirmationNumber)) {
 				matchingEvent = e
 				break
 			}
 		}
 
+		// Get airport information.
+		airport := getAirportName(trip.AirportCode)
+		if airport == "" {
+			logrus.Errorf("getting airport information from iata database for %s returned no match", trip.AirportCode)
+			continue
+		}
+
 		if matchingEvent == nil {
-			logrus.Warnf("no event found for trip: %#v", trip)
+			// No event was found for this trip, let's create one.
+			matchingEvent = &calendar.Event{
+				Summary:     trip.Title,
+				Description: trip.Description,
+				Start:       &trip.Start,
+				End:         &trip.End,
+				Location:    airport,
+			}
+
+			// Insert the event.
+			_, err = gcalClient.Events.Insert(calendarName, matchingEvent).Do()
+			if err != nil {
+				logrus.Errorf("inserting google calendar event failed: %v", err)
+			}
 			continue
 		}
 
@@ -199,7 +226,10 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		matchingEvent.Description = trip.Description
 		matchingEvent.Start = &trip.Start
 		matchingEvent.End = &trip.End
-		_, err := gcalClient.Events.Update(calendarName, matchingEvent.Id, matchingEvent).Do()
+		matchingEvent.Location = airport
+
+		// Update the event.
+		_, err = gcalClient.Events.Update(calendarName, matchingEvent.Id, matchingEvent).Do()
 		if err != nil {
 			logrus.Errorf("updating google calendar event %s failed: %v", matchingEvent.Id, err)
 		}
@@ -277,6 +307,16 @@ func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) (
 	}
 
 	return events, nil
+}
+
+func getAirportName(code string) string {
+	for _, airport := range openflights.Airports {
+		if airport.IATA == code {
+			return airport.Name
+		}
+	}
+
+	return ""
 }
 
 func usageAndExit(message string, exitCode int) {

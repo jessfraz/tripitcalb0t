@@ -31,3 +31,7 @@
 [[override]]
   name = "google.golang.org/api"
   branch = "master"
+
+[[override]]
+  name = "github.com/mmcloughlin/openflights"
+  branch = "master"
