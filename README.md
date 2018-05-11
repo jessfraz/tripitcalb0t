@@ -29,9 +29,11 @@ $ go get github.com/jessfraz/tripitcalb0t
 ```console
 $ docker run --restart always -d \
     -v /etc/localtime:/etc/localtime:ro \
+    -v /path/to/.tripitcalb0t/google.json:/.tripitcalb0t/google.json:ro \
     --name tripitcalb0t \
     -e "TRIPIT_USERNAME=your_username" \
     -e "TRIPIT_TOKEN=59f6asdfasdfasdf0" \
+    -e "GOOGLE_CALENDAR_ID=your_google_calendar_id" \
     r.j3ss.co/tripitcalb0t --interval 1m
 ```
 

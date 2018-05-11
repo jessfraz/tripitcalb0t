@@ -103,6 +103,10 @@ func init() {
 	if _, err := os.Stat(googleCalendarKeyfile); os.IsNotExist(err) {
 		usageAndExit(fmt.Sprintf("Google Calendar keyfile %q does not exist", googleCalendarKeyfile), 1)
 	}
+
+	if calendarName == "" {
+		usageAndExit("calendar name cannot be empty", 1)
+	}
 }
 
 func main() {
