@@ -30,7 +30,7 @@ func (c *Client) ReplaceCruise(id string, cruise Cruise) (*Response, error) {
 }
 
 // ReplaceDirections replaces the directions with the given id.
-func (c *Client) ReplaceDirections(id string, directions Directions) (*Response, error) {
+func (c *Client) ReplaceDirections(id string, directions Direction) (*Response, error) {
 	req := Request{
 		Directions: directions,
 	}

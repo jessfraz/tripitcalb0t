@@ -54,15 +54,15 @@ func (c *Client) GetCruise(id string, filters ...Filter) (Cruise, error) {
 }
 
 // GetDirections returns the specific directions for the given id.
-func (c *Client) GetDirections(id string, filters ...Filter) (Directions, error) {
+func (c *Client) GetDirections(id string, filters ...Filter) (Direction, error) {
 	resp, err := c.doRequest(http.MethodGet, fmt.Sprintf(EndpointFormatGetObject, TypeDirections, id, formatFilters(filters)), nil)
 	if err != nil {
-		return Directions{}, err
+		return Direction{}, err
 	}
 
 	// Check if we didn't get a result and return an error if true.
 	if len(resp.Directions) <= 0 {
-		return Directions{}, fmt.Errorf("get directions id %s returned an empty result", id)
+		return Direction{}, fmt.Errorf("get directions id %s returned an empty result", id)
 	}
 
 	// Return the object.

@@ -13,7 +13,7 @@ type Request struct {
 	Activity    Activity     `json:"ActivityObject,omitempty"`   // optional
 	Car         Car          `json:"CarObject,omitempty"`        // optional
 	Cruise      Cruise       `json:"CruiseObject,omitempty"`     // optional
-	Directions  Directions   `json:"DirectionsObject,omitempty"` // optional
+	Directions  Direction    `json:"DirectionsObject,omitempty"` // optional
 	Flight      Flight       `json:"AirObject,omitempty"`        // optional
 	Lodging     Lodging      `json:"LodgingObject,omitempty"`    // optional
 	Map         Map          `json:"MapObject,omitempty"`        // optional
@@ -31,21 +31,22 @@ type Response struct {
 	Errors   []Error   `json:"Error,omitempty" xml:"Error"`     // optional
 	Warnings []Warning `json:"Warning,omitempty" xml:"Warning"` // optional
 
-	Activities     []Activity      `json:"ActivityObject,omitempty" xml:"ActivityObject"`     // optional
-	Flights        Flights         `json:"AirObject,omitempty" xml:"AirObject"`               // optional
-	Cars           Cars            `json:"CarObject,omitempty" xml:"CarObject"`               // optional
-	Cruises        []Cruise        `json:"CruiseObject,omitempty" xml:"CruiseObject"`         // optional
-	Directions     []Directions    `json:"DirectionsObject,omitempty" xml:"DirectionsObject"` // optional
-	Lodging        []Lodging       `json:"LodgingObject,omitempty" xml:"LodgingObject"`       // optional
-	Maps           []Map           `json:"MapObject,omitempty" xml:"MapObject"`               // optional
-	Notes          Notes           `json:"NoteObject,omitempty" xml:"NoteObject"`             // optional
-	Rails          []Rail          `json:"RailObject,omitempty" xml:"RailObject"`             // optional
-	Restaurants    []Restaurant    `json:"RestaurantObject,omitempty" xml:"RestaurantObject"` // optional
-	Transports     Transports      `json:"TransportObject,omitempty" xml:"TransportObject"`   // optional
-	Trips          []Trip          `json:"Trip,omitempty" xml:"Trip"`                         // optional
-	Weather        []Weather       `json:"WeatherObject,omitempty" xml:"WeatherObject"`       // optional
-	PointsPrograms []PointsProgram `json:"PointsProgram,omitempty" xml:"PointsProgram"`       // optional
-	Profiles       []Profile       `json:"Profile,omitempty" xml:"Profile"`                   // optional
+	Activities  Activities  `json:"ActivityObject,omitempty" xml:"ActivityObject"`     // optional
+	Flights     Flights     `json:"AirObject,omitempty" xml:"AirObject"`               // optional
+	Cars        Cars        `json:"CarObject,omitempty" xml:"CarObject"`               // optional
+	Cruises     Cruises     `json:"CruiseObject,omitempty" xml:"CruiseObject"`         // optional
+	Directions  Directions  `json:"DirectionsObject,omitempty" xml:"DirectionsObject"` // optional
+	Lodging     Lodges      `json:"LodgingObject,omitempty" xml:"LodgingObject"`       // optional
+	Maps        Maps        `json:"MapObject,omitempty" xml:"MapObject"`               // optional
+	Notes       Notes       `json:"NoteObject,omitempty" xml:"NoteObject"`             // optional
+	Rails       Rails       `json:"RailObject,omitempty" xml:"RailObject"`             // optional
+	Restaurants Restaurants `json:"RestaurantObject,omitempty" xml:"RestaurantObject"` // optional
+
+	Transports     Transports      `json:"TransportObject,omitempty" xml:"TransportObject"` // optional
+	Trips          Trips           `json:"Trip,omitempty" xml:"Trip"`                       // optional
+	Weather        []Weather       `json:"WeatherObject,omitempty" xml:"WeatherObject"`     // optional
+	PointsPrograms []PointsProgram `json:"PointsProgram,omitempty" xml:"PointsProgram"`     // optional
+	Profiles       []Profile       `json:"Profile,omitempty" xml:"Profile"`                 // optional
 
 	PageNum  string `json:"page_num,omitempty"`
 	PageSize string `json:"page_size,omitempty"`
@@ -66,6 +67,30 @@ type Warning struct {
 	Description string `json:"description,omitempty"` // read-only
 	EntityType  string `json:"entity_type,omitempty"` // read-only
 	Timestamp   string `json:"timestamp,omitempty"`   // read-only, xs:datetime
+}
+
+// Activities is a group of Activity objects.
+type Activities []Activity
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Activities) UnmarshalJSON(b []byte) error {
+	var arr *[]Activity
+	arr = (*[]Activity)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Activity, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Activity contains details about activities like museum, theatre, and other events.
@@ -168,6 +193,30 @@ type Car struct {
 	MileageCharges       string    `json:"mileage_charges,omitempty" xml:"mileage_charges"`               // optional
 }
 
+// Cruises is a group of Cruise objects.
+type Cruises []Cruise
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Cruises) UnmarshalJSON(b []byte) error {
+	var arr *[]Cruise
+	arr = (*[]Cruise)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Cruise, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
 // Cruise contains information about cruises.
 type Cruise struct {
 	ID                   string          `json:"id,omitempty"`                        // optional, read-only
@@ -212,8 +261,32 @@ type CruiseSegment struct {
 	ID              string         `json:"id,omitempty"`               // optional, read-only
 }
 
-// Directions contains addresses to show directions for on the trip.
-type Directions struct {
+// Directions is a group of Direction objects.
+type Directions []Direction
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Directions) UnmarshalJSON(b []byte) error {
+	var arr *[]Direction
+	arr = (*[]Direction)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Direction, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
+// Direction contains addresses to show directions for on the trip.
+type Direction struct {
 	ID               string   `json:"id,omitempty"`                        // optional, read-only
 	TripID           string   `json:"trip_id,omitempty"`                   // optional
 	IsClientTraveler bool     `json:"is_client_traveler,string,omitempty"` // optional, read-only
@@ -363,6 +436,30 @@ type FlightStatus struct {
 	LastModified               string           `json:"last_modified,omitempty" xml:"last_modified"`                           // read-only
 }
 
+// Lodges is a group of Lodging objects.
+type Lodges []Lodging
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Lodges) UnmarshalJSON(b []byte) error {
+	var arr *[]Lodging
+	arr = (*[]Lodging)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Lodging, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
 // Lodging contains information about hotels or other lodging. hotel cancellation remarks should be in restrictions. hotel room description should be in notes. hotel average daily rate should be in booking_rate.
 type Lodging struct {
 	ID                   string    `json:"id,omitempty" xml:"id"`                                         // optional, read-only
@@ -396,6 +493,30 @@ type Lodging struct {
 	NumberGuests         string    `json:"number_guests,omitempty" xml:"number_guests"`                   // optional
 	NumberRooms          string    `json:"number_rooms,omitempty" xml:"number_rooms"`                     // optional
 	RoomType             string    `json:"room_type,omitempty" xml:"room_type"`                           // optional
+}
+
+// Maps is a group of Map objects.
+type Maps []Map
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Maps) UnmarshalJSON(b []byte) error {
+	var arr *[]Map
+	arr = (*[]Map)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Map, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Map contains addresses to show on a map.
@@ -449,6 +570,30 @@ type Note struct {
 	Text             string         `json:"text,omitempty"`                      // optional
 	URL              string         `json:"url,omitempty"`                       // optional
 	Notes            string         `json:"notes,omitempty"`                     // optional
+}
+
+// Rails is a group of Rail objects.
+type Rails []Rail
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Rails) UnmarshalJSON(b []byte) error {
+	var arr *[]Rail
+	arr = (*[]Rail)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Rail, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Rail contains information about trains.
@@ -521,6 +666,30 @@ type RailSegment struct {
 	ServiceClass        string   `json:"service_class,omitempty"`       // optional
 	TrainNumber         string   `json:"train_number,omitempty"`        // optional
 	TrainType           string   `json:"train_type,omitempty"`          // optional
+}
+
+// Restaurants is a group of Restaurant objects.
+type Restaurants []Restaurant
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Restaurants) UnmarshalJSON(b []byte) error {
+	var arr *[]Restaurant
+	arr = (*[]Restaurant)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Restaurant, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Restaurant contains details about dining reservations. restaurant name should be in supplier_name. restaurant notes should be in notes.
@@ -651,6 +820,30 @@ type TransportSegment struct {
 	ConfirmationNum      string         `json:"confirmation_num,omitempty"`     // optional
 	NumberPassengers     string         `json:"number_passengers,omitempty"`    // optional
 	VehicleDescription   string         `json:"vehicle_description,omitempty"`  // optional
+}
+
+// Trips is a group of Trip objects.
+type Trips []Trip
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Trips) UnmarshalJSON(b []byte) error {
+	var arr *[]Trip
+	arr = (*[]Trip)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Trip, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Trip represents a trip in the TripIt model.
