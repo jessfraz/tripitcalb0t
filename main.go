@@ -46,7 +46,7 @@ var (
 	tripitUsername string
 	tripitToken    string
 
-	interval string
+	interval time.Duration
 	once     bool
 
 	debug bool
@@ -68,7 +68,7 @@ func init() {
 	flag.StringVar(&tripitUsername, "tripit-username", os.Getenv("TRIPIT_USERNAME"), "TripIt Username for authentication (or env var TRIPIT_USERNAME)")
 	flag.StringVar(&tripitToken, "tripit-token", os.Getenv("TRIPIT_TOKEN"), "TripIt Token for authentication (or env var TRIPIT_TOKEN)")
 
-	flag.StringVar(&interval, "interval", "1m", "update interval (ex. 5ms, 10s, 1m, 3h)")
+	flag.DurationVar(&interval, "interval", time.Minute, "update interval (ex. 5ms, 10s, 1m, 3h)")
 	flag.BoolVar(&once, "once", false, "run once and exit, do not run as a daemon")
 
 	flag.BoolVar(&vrsn, "version", false, "print version and exit")
@@ -110,7 +110,7 @@ func init() {
 }
 
 func main() {
-	var ticker *time.Ticker
+	ticker := time.NewTicker(interval)
 
 	// On ^C, or SIGTERM handle exit.
 	c := make(chan os.Signal, 1)
@@ -123,13 +123,6 @@ func main() {
 			os.Exit(0)
 		}
 	}()
-
-	// Parse the duration.
-	dur, err := time.ParseDuration(interval)
-	if err != nil {
-		logrus.Fatalf("parsing %s as duration failed: %v", interval, err)
-	}
-	ticker = time.NewTicker(dur)
 
 	// Create the TripIt API client.
 	tripitClient := tripit.New(tripitUsername, tripitToken)

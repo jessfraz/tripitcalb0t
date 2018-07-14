@@ -40,6 +40,7 @@ $ docker run --restart always -d \
 ## Usage
 
 ```console
+$ tripitcalb0t -h
  _        _       _ _            _ _      ___  _
 | |_ _ __(_)_ __ (_) |_ ___ __ _| | |__  / _ \| |_
 | __| '__| | '_ \| | __/ __/ _` | | '_ \| | | | __|
@@ -49,15 +50,15 @@ $ docker run --restart always -d \
 
  Bot to automatically create Google Calendar events from TripIt flight data.
  Version: v0.1.2
- Build: 1f12d9f
+ Build: cb952a5
 
   -calendar string
         Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)
   -d    run in debug mode
   -google-keyfile string
-        Path to Google Calendar keyfile (default "/home/jessie/.tripitcalb0t/google.json")
-  -interval string
-        update interval (ex. 5ms, 10s, 1m, 3h) (default "1m")
+        Path to Google Calendar keyfile (default "~/.tripitcalb0t/google.json")
+  -interval duration
+        update interval (ex. 5ms, 10s, 1m, 3h) (default 1m0s)
   -once
         run once and exit, do not run as a daemon
   -tripit-token string
