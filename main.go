@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -14,28 +15,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/genuinetools/pkg/cli"
 	"github.com/jessfraz/tripitcalb0t/tripit"
 	"github.com/jessfraz/tripitcalb0t/version"
 	"github.com/mmcloughlin/openflights"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/google"
 	calendar "google.golang.org/api/calendar/v3"
-)
-
-const (
-	// BANNER is what is printed for help/info output.
-	BANNER = ` _        _       _ _            _ _      ___  _
-| |_ _ __(_)_ __ (_) |_ ___ __ _| | |__  / _ \| |_
-| __| '__| | '_ \| | __/ __/ _` + "`" + ` | | '_ \| | | | __|
-| |_| |  | | |_) | | || (_| (_| | | |_) | |_| | |_
- \__|_|  |_| .__/|_|\__\___\__,_|_|_.__/ \___/ \__|
-           |_|
-
- Bot to automatically create Google Calendar events from TripIt flight data.
- Version: %s
- Build: %s
-
-`
 )
 
 var (
@@ -50,10 +36,9 @@ var (
 	once     bool
 
 	debug bool
-	vrsn  bool
 )
 
-func init() {
+func main() {
 	// Get home directory.
 	home, err := getHome()
 	if err != nil {
@@ -61,102 +46,109 @@ func init() {
 	}
 	credsDir = filepath.Join(home, ".tripitcalb0t")
 
-	// parse flags
-	flag.StringVar(&googleCalendarKeyfile, "google-keyfile", filepath.Join(credsDir, "google.json"), "Path to Google Calendar keyfile")
-	flag.StringVar(&calendarName, "calendar", os.Getenv("GOOGLE_CALENDAR_ID"), "Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)")
+	// Create a new cli program.
+	p := cli.NewProgram()
+	p.Name = "tripitcalb0t"
+	p.Description = "Bot to automatically create Google Calendar events from TripIt flight data"
 
-	flag.StringVar(&tripitUsername, "tripit-username", os.Getenv("TRIPIT_USERNAME"), "TripIt Username for authentication (or env var TRIPIT_USERNAME)")
-	flag.StringVar(&tripitToken, "tripit-token", os.Getenv("TRIPIT_TOKEN"), "TripIt Token for authentication (or env var TRIPIT_TOKEN)")
+	// Set the GitCommit and Version.
+	p.GitCommit = version.GITCOMMIT
+	p.Version = version.VERSION
 
-	flag.DurationVar(&interval, "interval", time.Minute, "update interval (ex. 5ms, 10s, 1m, 3h)")
-	flag.BoolVar(&once, "once", false, "run once and exit, do not run as a daemon")
+	// Setup the global flags.
+	p.FlagSet = flag.NewFlagSet("global", flag.ExitOnError)
+	p.FlagSet.StringVar(&googleCalendarKeyfile, "google-keyfile", filepath.Join(credsDir, "google.json"), "Path to Google Calendar keyfile")
+	p.FlagSet.StringVar(&calendarName, "calendar", os.Getenv("GOOGLE_CALENDAR_ID"), "Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)")
 
-	flag.BoolVar(&vrsn, "version", false, "print version and exit")
-	flag.BoolVar(&vrsn, "v", false, "print version and exit (shorthand)")
-	flag.BoolVar(&debug, "d", false, "run in debug mode")
+	p.FlagSet.StringVar(&tripitUsername, "tripit-username", os.Getenv("TRIPIT_USERNAME"), "TripIt Username for authentication (or env var TRIPIT_USERNAME)")
+	p.FlagSet.StringVar(&tripitToken, "tripit-token", os.Getenv("TRIPIT_TOKEN"), "TripIt Token for authentication (or env var TRIPIT_TOKEN)")
 
-	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, version.VERSION, version.GITCOMMIT))
-		flag.PrintDefaults()
+	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "update interval (ex. 5ms, 10s, 1m, 3h)")
+	p.FlagSet.BoolVar(&once, "once", false, "run once and exit, do not run as a daemon")
+
+	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
+
+	// Set the before function.
+	p.Before = func(ctx context.Context) error {
+		// Set the log level.
+		if debug {
+			logrus.SetLevel(logrus.DebugLevel)
+		}
+
+		if len(tripitUsername) < 1 {
+			return errors.New("tripit username cannot be empty")
+		}
+
+		if len(tripitToken) < 1 {
+			return errors.New("tripit token cannot be empty")
+		}
+
+		if _, err := os.Stat(googleCalendarKeyfile); os.IsNotExist(err) {
+			return fmt.Errorf("Google Calendar keyfile %q does not exist", googleCalendarKeyfile)
+		}
+
+		if len(calendarName) < 1 {
+			return errors.New("calendar name cannot be empty")
+		}
+
+		return nil
 	}
 
-	flag.Parse()
+	// Set the main program action.
+	p.Action = func(ctx context.Context, args []string) error {
+		ticker := time.NewTicker(interval)
 
-	if vrsn {
-		fmt.Printf("tripitcalb0t version %s, build %s", version.VERSION, version.GITCOMMIT)
-		os.Exit(0)
-	}
+		// On ^C, or SIGTERM handle exit.
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		signal.Notify(c, syscall.SIGTERM)
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithCancel(ctx)
+		go func() {
+			for sig := range c {
+				cancel()
+				ticker.Stop()
+				logrus.Infof("Received %s, exiting.", sig.String())
+				os.Exit(0)
+			}
+		}()
 
-	// set log level
-	if debug {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
+		// Create the TripIt API client.
+		tripitClient := tripit.New(tripitUsername, tripitToken)
 
-	if tripitUsername == "" {
-		usageAndExit("tripit username cannot be empty", 1)
-	}
+		// Create the Google calendar API client.
+		gcalData, err := ioutil.ReadFile(googleCalendarKeyfile)
+		if err != nil {
+			logrus.Fatalf("reading file %s failed: %v", googleCalendarKeyfile, err)
+		}
+		gcalTokenSource, err := google.JWTConfigFromJSON(gcalData, calendar.CalendarScope)
+		if err != nil {
+			logrus.Fatalf("creating google calendar token source from file %s failed: %v", googleCalendarKeyfile, err)
+		}
 
-	if tripitToken == "" {
-		usageAndExit("tripit token cannot be empty", 1)
-	}
+		// Create the Google calendar client.
+		gcalClient, err := calendar.New(gcalTokenSource.Client(ctx))
+		if err != nil {
+			logrus.Fatalf("creating google calendar client failed: %v", err)
+		}
 
-	if _, err := os.Stat(googleCalendarKeyfile); os.IsNotExist(err) {
-		usageAndExit(fmt.Sprintf("Google Calendar keyfile %q does not exist", googleCalendarKeyfile), 1)
-	}
-
-	if calendarName == "" {
-		usageAndExit("calendar name cannot be empty", 1)
-	}
-}
-
-func main() {
-	ticker := time.NewTicker(interval)
-
-	// On ^C, or SIGTERM handle exit.
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	signal.Notify(c, syscall.SIGTERM)
-	go func() {
-		for sig := range c {
-			ticker.Stop()
-			logrus.Infof("Received %s, exiting.", sig.String())
+		// If the user passed the once flag, just do the run once and exit.
+		if once {
+			run(tripitClient, gcalClient, calendarName)
+			logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
 			os.Exit(0)
 		}
-	}()
 
-	// Create the TripIt API client.
-	tripitClient := tripit.New(tripitUsername, tripitToken)
+		logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
+		for range ticker.C {
+			run(tripitClient, gcalClient, calendarName)
+		}
 
-	// Create the Google calendar API client.
-	gcalData, err := ioutil.ReadFile(googleCalendarKeyfile)
-	if err != nil {
-		logrus.Fatalf("reading file %s failed: %v", googleCalendarKeyfile, err)
-	}
-	gcalTokenSource, err := google.JWTConfigFromJSON(gcalData, calendar.CalendarScope)
-	if err != nil {
-		logrus.Fatalf("creating google calendar token source from file %s failed: %v", googleCalendarKeyfile, err)
+		return nil
 	}
 
-	// Create our context.
-	ctx := context.Background()
-
-	// Create the Google calendar client.
-	gcalClient, err := calendar.New(gcalTokenSource.Client(ctx))
-	if err != nil {
-		logrus.Fatalf("creating google calendar client failed: %v", err)
-	}
-
-	// If the user passed the once flag, just do the run once and exit.
-	if once {
-		run(tripitClient, gcalClient, calendarName)
-		logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
-		os.Exit(0)
-	}
-
-	logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
-	for range ticker.C {
-		run(tripitClient, gcalClient, calendarName)
-	}
+	// Run our program.
+	p.Run()
 }
 
 func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string) {
@@ -312,16 +304,6 @@ func getAirportName(code string) string {
 	}
 
 	return ""
-}
-
-func usageAndExit(message string, exitCode int) {
-	if message != "" {
-		fmt.Fprintf(os.Stderr, message)
-		fmt.Fprintf(os.Stderr, "\n\n")
-	}
-	flag.Usage()
-	fmt.Fprintf(os.Stderr, "\n")
-	os.Exit(exitCode)
 }
 
 func getHome() (string, error) {
