@@ -1,26 +1,31 @@
 # tripitcalb0t
 
-[![Travis CI](https://travis-ci.org/jessfraz/tripitcalb0t.svg?branch=master)](https://travis-ci.org/jessfraz/tripitcalb0t)
+[![Travis CI](https://img.shields.io/travis/jessfraz/tripitcalb0t.svg?style=for-the-badge)](https://travis-ci.org/jessfraz/tripitcalb0t)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/tripitcalb0t)
+[![Github All Releases](https://img.shields.io/github/downloads/jessfraz/tripitcalb0t/total.svg?style=for-the-badge)](https://github.com/jessfraz/tripitcalb0t/releases)
 
 Bot to automatically create Google Calendar events from TripIt flight data.
 
-I have OCD about the layout of my calendar events so that is why I made my own
-bot.
+I have OCD about the layout of my calendar events so that is why I made my own bot.
+
+ * [Installation](README.md#installation)
+      * [Binaries](README.md#binaries)
+      * [Via Go](README.md#via-go)
+      * [Running with Docker](README.md#running-with-docker)
+ * [Usage](README.md#usage)
+ * [Setup](README.md#setup)
+   * [Google Calendar](README.md#google-calendar)
+   * [TripIt](README.md#tripit)
 
 ## Installation
 
 #### Binaries
 
-- **darwin** [386](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-darwin-386) / [amd64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-darwin-amd64)
-- **freebsd** [386](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-freebsd-386) / [amd64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-freebsd-amd64)
-- **linux** [386](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-linux-386) / [amd64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-linux-amd64) / [arm](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-linux-arm) / [arm64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-linux-arm64)
-- **solaris** [amd64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-solaris-amd64)
-- **windows** [386](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-windows-386) / [amd64](https://github.com/jessfraz/tripitcalb0t/releases/download/v0.1.3/tripitcalb0t-windows-amd64)
-
+For installation instructions from binaries please visit the [Releases Page](https://github.com/jessfraz/tripitcalb0t/releases).
 
 #### Via Go
 
-```bash
+```console
 $ go get github.com/jessfraz/tripitcalb0t
 ```
 
