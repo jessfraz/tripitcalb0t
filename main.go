@@ -30,7 +30,7 @@ var (
 	credsDir              string
 
 	tripitUsername string
-	tripitToken    string
+	tripitPassword string
 
 	interval time.Duration
 	once     bool
@@ -61,7 +61,8 @@ func main() {
 	p.FlagSet.StringVar(&calendarName, "calendar", os.Getenv("GOOGLE_CALENDAR_ID"), "Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)")
 
 	p.FlagSet.StringVar(&tripitUsername, "tripit-username", os.Getenv("TRIPIT_USERNAME"), "TripIt Username for authentication (or env var TRIPIT_USERNAME)")
-	p.FlagSet.StringVar(&tripitToken, "tripit-token", os.Getenv("TRIPIT_TOKEN"), "TripIt Token for authentication (or env var TRIPIT_TOKEN)")
+	p.FlagSet.StringVar(&tripitPassword, "tripit-password", os.Getenv("TRIPIT_PASSWORD"), "TripIt Password for authentication (or env var TRIPIT_PASSWORD)")
+
 
 	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "update interval (ex. 5ms, 10s, 1m, 3h)")
 	p.FlagSet.BoolVar(&once, "once", false, "run once and exit, do not run as a daemon")
@@ -79,8 +80,8 @@ func main() {
 			return errors.New("tripit username cannot be empty")
 		}
 
-		if len(tripitToken) < 1 {
-			return errors.New("tripit token cannot be empty")
+		if len(tripitPassword) < 1 {
+			return errors.New("tripit password cannot be empty")
 		}
 
 		if _, err := os.Stat(googleCalendarKeyfile); os.IsNotExist(err) {
@@ -114,7 +115,7 @@ func main() {
 		}()
 
 		// Create the TripIt API client.
-		tripitClient := tripit.New(tripitUsername, tripitToken)
+		tripitClient := tripit.New(tripitUsername, tripitPassword)
 
 		// Create the Google calendar API client.
 		gcalData, err := ioutil.ReadFile(googleCalendarKeyfile)
