@@ -16,7 +16,7 @@ Booking Site (%s) Confirmation # %s
 Supplier (%s) Confirmation # %s
 Record Locator # %s
 
-Operating Airline: %s %s
+Airline: %s %s
 
 Departing Terminal %s Gate %s
 
@@ -75,6 +75,18 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 			TimeZone: segment.EndDateTime.Timezone,
 		}
 
+		// Sort out operating versus marketing airline
+		var airlineName, airlineCode, flightNumber string
+		if segment.OperatingAirline != "" {
+			airlineName = segment.OperatingAirline
+			airlineCode = segment.OperatingAirlineCode
+			flightNumber = segment.OperatingFlightNumber
+		} else if segment.MarketingAirline != "" {
+			airlineName = segment.MarketingAirline
+			airlineCode = segment.MarketingAirlineCode
+			flightNumber = segment.MarketingFlightNumber
+		}
+
 		// Create a description for the flight segment.
 		description := fmt.Sprintf(eventDescriptionFormat,
 			segment.StartAirportCode,
@@ -85,8 +97,8 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 			f.SupplierName,
 			f.SupplierConfNum,
 			f.RecordLocator,
-			segment.OperatingAirline,
-			segment.OperatingFlightNumber,
+			airlineName,
+			flightNumber,
 			segment.StartTerminal,
 			segment.StartGate,
 			segment.EndCityName,
@@ -108,7 +120,7 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 
 		// Append the event to our events array.
 		events = append(events, Event{
-			Title:              fmt.Sprintf("Flight to %s", segment.EndCityName),
+			Title:              fmt.Sprintf("Flight to %s (%s %s)", segment.EndCityName, airlineCode, flightNumber),
 			Description:        description,
 			AirportCode:        segment.StartAirportCode,
 			Start:              start,
