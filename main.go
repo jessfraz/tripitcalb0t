@@ -28,12 +28,14 @@ var (
 	googleCalendarKeyfile string
 	calendarName          string
 	credsDir              string
+  	pastFilter            string
 
 	tripitUsername string
 	tripitPassword string
 
 	interval time.Duration
 	once     bool
+  	past     bool
 
 	debug bool
 )
@@ -64,10 +66,11 @@ func main() {
 	p.FlagSet.StringVar(&tripitPassword, "tripit-password", os.Getenv("TRIPIT_PASSWORD"), "TripIt Password for authentication (or env var TRIPIT_PASSWORD)")
 
 
-	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "update interval (ex. 5ms, 10s, 1m, 3h)")
-	p.FlagSet.BoolVar(&once, "once", false, "run once and exit, do not run as a daemon")
+	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "Update interval (ex. 5ms, 10s, 1m, 3h)")
+  	p.FlagSet.BoolVar(&once, "once", false, "Run once and exit, do not run as a daemon")
+  	p.FlagSet.BoolVar(&past, "past", false, "Include past trips")
 
-	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
+	p.FlagSet.BoolVar(&debug, "d", false, "Enable debug logging")
 
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
@@ -133,16 +136,19 @@ func main() {
 			logrus.Fatalf("creating google calendar client failed: %v", err)
 		}
 
+    	pastFilter := fmt.Sprintf("%v", past)
+
 		// If the user passed the once flag, just do the run once and exit.
-		if once {
-			run(tripitClient, gcalClient, calendarName)
+
+    	if once {
+			run(tripitClient, gcalClient, calendarName, pastFilter)
 			logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
 			os.Exit(0)
 		}
 
 		logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
 		for range ticker.C {
-			run(tripitClient, gcalClient, calendarName)
+			run(tripitClient, gcalClient, calendarName, pastFilter)
 		}
 
 		return nil
@@ -152,7 +158,7 @@ func main() {
 	p.Run()
 }
 
-func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string) {
+func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName string, pastFilter string) {
 	// Get a list of events from Google calendar.
 	t := time.Now().AddDate(-4, 0, 0).Format(time.RFC3339)
 	events, err := gcalClient.Events.List(calendarName).ShowDeleted(false).SingleEvents(true).TimeMin(t).OrderBy("startTime").Q("Flight").MaxResults(2500).Do()
@@ -160,7 +166,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		logrus.Fatalf("getting events from google calendar %s failed: %v", calendarName, err)
 	}
 
-	trips, err := getTripItEvents(tripitClient, 1, "true")
+	trips, err := getTripItEvents(tripitClient, 1, pastFilter)
 	if err != nil {
 		logrus.Fatalf("getting tripit events failed: %v", err)
 	}
