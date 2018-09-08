@@ -15,14 +15,14 @@ import (
 // Client holds the information needed for TripIt API authentication.
 type Client struct {
 	username string
-	token    string
+	password string
 }
 
 // New creates a new TripIt API client.
-func New(username, token string) *Client {
+func New(username, password string) *Client {
 	return &Client{
 		username: username,
-		token:    token,
+		password: password,
 	}
 }
 
@@ -47,7 +47,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*Response
 	}
 
 	// Set the basic auth credentials.
-	req.SetBasicAuth(c.username, c.token)
+	req.SetBasicAuth(c.username, c.password)
 
 	// Do the request.
 	resp, err := client.Do(req)

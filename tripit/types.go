@@ -940,15 +940,17 @@ type ProfileAttributes struct {
 
 // ProfileEmailAddresses contains the list of email addresses for a user.
 type ProfileEmailAddresses struct {
-	ProfileEmailAddresses []ProfileEmailAddress `json:"ProfileEmailAddress,omitempty" xml:"ProfileEmailAddress"`
+	ProfileEmailAddresses ProfileEmailAddress `json:"ProfileEmailAddress,omitempty" xml:"ProfileEmailAddress"`
 }
 
 // ProfileEmailAddress contains an email address and its properties. All ProfileEmailAddress elements are read-only.
 type ProfileEmailAddress struct {
-	Address      string `json:"address" xml:"address"`                                // read-only
-	IsAutoImport bool   `json:"is_auto_import,string,omitempty" xml:"is_auto_import"` // read-only
-	IsConfirmed  bool   `json:"is_confirmed,string,omitempty" xml:"is_confirmed"`     // read-only
-	IsPrimary    bool   `json:"is_primary,string,omitempty" xml:"is_primary"`         // read-only
+	EmailRef     string `json:"email_ref" xml:"email_ref"`                                            // read-only
+	Address      string `json:"address" xml:"address"`                                                // read-only
+	IsAutoImport bool   `json:"is_auto_import,string,omitempty" xml:"is_auto_import"`                 // read-only
+	IsConfirmed  bool   `json:"is_confirmed,string,omitempty" xml:"is_confirmed"`                     // read-only
+	IsPrimary    bool   `json:"is_primary,string,omitempty" xml:"is_primary"`                         // read-only
+	IsAutoInbox  bool   `json:"is_auto_inbox_eligible,string,omitempty" xml:"is_auto_inbox_eligible"` // read-only
 }
 
 // GroupMemberships contains a list of groups that the user is a member of.

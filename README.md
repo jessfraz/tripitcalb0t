@@ -37,7 +37,7 @@ $ docker run --restart always -d \
     -v /path/to/.tripitcalb0t/google.json:/.tripitcalb0t/google.json:ro \
     --name tripitcalb0t \
     -e "TRIPIT_USERNAME=your_username" \
-    -e "TRIPIT_TOKEN=59f6asdfasdfasdf0" \
+    -e "TRIPIT_PASSWORD=59f6asdfasdfasdf0" \
     -e "GOOGLE_CALENDAR_ID=your_google_calendar_id" \
     r.j3ss.co/tripitcalb0t --interval 1m
 ```
@@ -53,11 +53,12 @@ Usage: tripitcalb0t <command>
 Flags:
 
   --calendar         Calendar name to add events to (or env var GOOGLE_CALENDAR_ID)
-  -d                 enable debug logging (default: false)
+  -d                 Enable debug logging (default: false)
   --google-keyfile   Path to Google Calendar keyfile (default: ~/.tripitcalb0t/google.json)
-  --interval         update interval (ex. 5ms, 10s, 1m, 3h) (default: 1m0s)
-  --once             run once and exit, do not run as a daemon (default: false)
-  --tripit-token     TripIt Token for authentication (or env var TRIPIT_TOKEN)
+  --interval         Update interval (ex. 5ms, 10s, 1m, 3h) (default: 1m0s)
+  --once             Run once and exit, do not run as a daemon (default: false)
+  --past             Include past trips (default: false)
+  --tripit-password  TripIt Password for authentication (or env var TRIPIT_PASSWORD)
   --tripit-username  TripIt Username for authentication (or env var TRIPIT_USERNAME)
 
 Commands:
