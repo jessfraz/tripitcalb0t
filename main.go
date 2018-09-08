@@ -28,14 +28,14 @@ var (
 	googleCalendarKeyfile string
 	calendarName          string
 	credsDir              string
-  	pastFilter            string
+	pastFilter            string
 
 	tripitUsername string
 	tripitPassword string
 
 	interval time.Duration
 	once     bool
-  	past     bool
+	past     bool
 
 	debug bool
 )
@@ -67,8 +67,8 @@ func main() {
 
 
 	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "Update interval (ex. 5ms, 10s, 1m, 3h)")
-  	p.FlagSet.BoolVar(&once, "once", false, "Run once and exit, do not run as a daemon")
-  	p.FlagSet.BoolVar(&past, "past", false, "Include past trips")
+	p.FlagSet.BoolVar(&once, "once", false, "Run once and exit, do not run as a daemon")
+	p.FlagSet.BoolVar(&past, "past", false, "Include past trips")
 
 	p.FlagSet.BoolVar(&debug, "d", false, "Enable debug logging")
 
