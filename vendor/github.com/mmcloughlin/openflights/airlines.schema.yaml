@@ -1,0 +1,24 @@
+name: Airline
+doc: Airline represents an airline.
+collection_doc: Airlines is a list of all airlines in the OpenFlights dataset.
+fields:
+  - null  # Airline ID
+  - name: Name
+    doc: Name of the airline.
+    type: string
+  - name: Alias
+    doc: Alias of the airline. For example, All Nippon Airways is commonly known as "ANA".
+    type: string
+  - name: IATA
+    doc: 2-letter IATA code, if available.
+    type: string
+  - name: ICAO
+    doc: 3-letter ICAO code, if available.
+    type: string
+  - name: Callsign
+    doc: Airline callsign.
+    type: string
+  - name: Country
+    doc: Country or territory where airline is incorporated.
+    type: string
+  - null # Active Y/N
