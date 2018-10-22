@@ -65,7 +65,6 @@ func main() {
 	p.FlagSet.StringVar(&tripitUsername, "tripit-username", os.Getenv("TRIPIT_USERNAME"), "TripIt Username for authentication (or env var TRIPIT_USERNAME)")
 	p.FlagSet.StringVar(&tripitPassword, "tripit-password", os.Getenv("TRIPIT_PASSWORD"), "TripIt Password for authentication (or env var TRIPIT_PASSWORD)")
 
-
 	p.FlagSet.DurationVar(&interval, "interval", time.Minute, "Update interval (ex. 5ms, 10s, 1m, 3h)")
 	p.FlagSet.BoolVar(&once, "once", false, "Run once and exit, do not run as a daemon")
 	p.FlagSet.BoolVar(&past, "past", false, "Include past trips")
@@ -136,11 +135,11 @@ func main() {
 			logrus.Fatalf("creating google calendar client failed: %v", err)
 		}
 
-    	pastFilter := fmt.Sprintf("%v", past)
+		pastFilter := fmt.Sprintf("%v", past)
 
 		// If the user passed the once flag, just do the run once and exit.
 
-    	if once {
+		if once {
 			run(tripitClient, gcalClient, calendarName, pastFilter)
 			logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
 			os.Exit(0)
