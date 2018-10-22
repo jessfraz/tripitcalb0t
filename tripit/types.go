@@ -940,7 +940,7 @@ type ProfileAttributes struct {
 
 // ProfileEmailAddresses contains the list of email addresses for a user.
 type ProfileEmailAddresses struct {
-	ProfileEmailAddresses ProfileEmailAddress `json:"ProfileEmailAddress,omitempty" xml:"ProfileEmailAddress"`
+	ProfileEmailAddresses []ProfileEmailAddress `json:"ProfileEmailAddress,omitempty" xml:"ProfileEmailAddress"`
 }
 
 // ProfileEmailAddress contains an email address and its properties. All ProfileEmailAddress elements are read-only.
