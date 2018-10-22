@@ -46,7 +46,7 @@ type Response struct {
 	Trips          Trips           `json:"Trip,omitempty" xml:"Trip"`                       // optional
 	Weather        []Weather       `json:"WeatherObject,omitempty" xml:"WeatherObject"`     // optional
 	PointsPrograms []PointsProgram `json:"PointsProgram,omitempty" xml:"PointsProgram"`     // optional
-	Profiles       []Profile       `json:"Profile,omitempty" xml:"Profile"`                 // optional
+	Profiles       Profiles        `json:"Profile,omitempty" xml:"Profile"`                 // optional
 
 	PageNum  string `json:"page_num,omitempty"`
 	PageSize string `json:"page_size,omitempty"`
@@ -912,6 +912,30 @@ type PointsProgramActivity struct {
 type PointsProgramExpiration struct {
 	Date   string `json:"date,omitempty" xml:"date"`     // read-only, xs:date
 	Amount string `json:"amount,omitempty" xml:"amount"` // optional, read-only
+}
+
+// Profiles is a data type for Profile objects.
+type Profiles []Profile
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *Profiles) UnmarshalJSON(b []byte) error {
+	var arr *[]Profile
+	arr = (*[]Profile)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Profile, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Profile contains user information. All Profile elements are read-only.
