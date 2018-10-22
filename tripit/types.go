@@ -938,9 +938,28 @@ type ProfileAttributes struct {
 	Ref string `json:"ref,omitempty" xml:"ref"` // read-only
 }
 
-// ProfileEmailAddresses contains the list of email addresses for a user.
-type ProfileEmailAddresses struct {
-	ProfileEmailAddresses []ProfileEmailAddress `json:"ProfileEmailAddress,omitempty" xml:"ProfileEmailAddress"`
+// ProfileEmailAddresses is a data type for ProfileEmailAddress objects.
+type ProfileEmailAddresses []ProfileEmailAddress
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *ProfileEmailAddresses) UnmarshalJSON(b []byte) error {
+	var arr *[]ProfileEmailAddress
+	arr = (*[]ProfileEmailAddress)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]ProfileEmailAddress, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // ProfileEmailAddress contains an email address and its properties. All ProfileEmailAddress elements are read-only.
