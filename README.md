@@ -34,7 +34,7 @@ $ go get github.com/jessfraz/tripitcalb0t
 ```console
 $ docker run --restart always -d \
     -v /etc/localtime:/etc/localtime:ro \
-    -v /path/to/.tripitcalb0t/google.json:/.tripitcalb0t/google.json:ro \
+    -v /path/to/.tripitcalb0t/google.json:/root/.tripitcalb0t/google.json:ro \
     --name tripitcalb0t \
     -e "TRIPIT_USERNAME=your_username" \
     -e "TRIPIT_PASSWORD=59f6asdfasdfasdf0" \
