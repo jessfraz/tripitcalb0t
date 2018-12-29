@@ -8,14 +8,11 @@ Bot to automatically create Google Calendar events from TripIt flight data.
 
 I have OCD about the layout of my calendar events so that is why I made my own bot.
 
- * [Installation](README.md#installation)
-      * [Binaries](README.md#binaries)
-      * [Via Go](README.md#via-go)
-      * [Running with Docker](README.md#running-with-docker)
- * [Usage](README.md#usage)
- * [Setup](README.md#setup)
-   * [Google Calendar](README.md#google-calendar)
-   * [TripIt](README.md#tripit)
+**Table of Contents**
+
+<!-- toc -->
+
+<!-- tocstop -->
 
 ## Installation
 
