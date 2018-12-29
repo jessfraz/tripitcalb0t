@@ -12,6 +12,15 @@ I have OCD about the layout of my calendar events so that is why I made my own b
 
 <!-- toc -->
 
+- [Installation](#installation)
+    + [Binaries](#binaries)
+    + [Via Go](#via-go)
+    + [Running with Docker](#running-with-docker)
+- [Usage](#usage)
+- [Setup](#setup)
+  * [Google Calendar](#google-calendar)
+  * [TripIt](#tripit)
+
 <!-- tocstop -->
 
 ## Installation
