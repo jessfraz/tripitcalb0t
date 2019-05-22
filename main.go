@@ -69,6 +69,7 @@ func main() {
 	p.FlagSet.BoolVar(&once, "once", false, "Run once and exit, do not run as a daemon")
 	p.FlagSet.BoolVar(&past, "past", false, "Include past trips")
 
+	p.FlagSet.BoolVar(&debug, "debug", false, "Enable debug logging")
 	p.FlagSet.BoolVar(&debug, "d", false, "Enable debug logging")
 
 	// Set the before function.
@@ -204,6 +205,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 				Start:       &trip.Start,
 				End:         &trip.End,
 				Location:    airport,
+				ColorId:     "3",
 			}
 
 			// Insert the event.
@@ -220,6 +222,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		matchingEvent.Start = &trip.Start
 		matchingEvent.End = &trip.End
 		matchingEvent.Location = airport
+		matchingEvent.ColorId = "3"
 
 		// Update the event.
 		_, err = gcalClient.Events.Update(calendarName, matchingEvent.Id, matchingEvent).Do()
