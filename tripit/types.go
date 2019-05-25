@@ -74,8 +74,7 @@ type Activities []Activity
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Activities) UnmarshalJSON(b []byte) error {
-	var arr *[]Activity
-	arr = (*[]Activity)(p)
+	arr := (*[]Activity)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -132,8 +131,7 @@ type Cars []Car
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Cars) UnmarshalJSON(b []byte) error {
-	var arr *[]Car
-	arr = (*[]Car)(p)
+	arr := (*[]Car)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -198,8 +196,7 @@ type Cruises []Cruise
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Cruises) UnmarshalJSON(b []byte) error {
-	var arr *[]Cruise
-	arr = (*[]Cruise)(p)
+	arr := (*[]Cruise)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -266,8 +263,7 @@ type Directions []Direction
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Directions) UnmarshalJSON(b []byte) error {
-	var arr *[]Direction
-	arr = (*[]Direction)(p)
+	arr := (*[]Direction)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -303,8 +299,7 @@ type Flights []Flight
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Flights) UnmarshalJSON(b []byte) error {
-	var arr *[]Flight
-	arr = (*[]Flight)(p)
+	arr := (*[]Flight)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -357,8 +352,7 @@ type FlightSegments []FlightSegment
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *FlightSegments) UnmarshalJSON(b []byte) error {
-	var arr *[]FlightSegment
-	arr = (*[]FlightSegment)(p)
+	arr := (*[]FlightSegment)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -441,8 +435,7 @@ type Lodges []Lodging
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Lodges) UnmarshalJSON(b []byte) error {
-	var arr *[]Lodging
-	arr = (*[]Lodging)(p)
+	arr := (*[]Lodging)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -500,8 +493,7 @@ type Maps []Map
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Maps) UnmarshalJSON(b []byte) error {
-	var arr *[]Map
-	arr = (*[]Map)(p)
+	arr := (*[]Map)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -536,8 +528,7 @@ type Notes []Note
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Notes) UnmarshalJSON(b []byte) error {
-	var arr *[]Note
-	arr = (*[]Note)(p)
+	arr := (*[]Note)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -577,8 +568,7 @@ type Rails []Rail
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Rails) UnmarshalJSON(b []byte) error {
-	var arr *[]Rail
-	arr = (*[]Rail)(p)
+	arr := (*[]Rail)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -631,8 +621,7 @@ type RailSegments []RailSegment
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *RailSegments) UnmarshalJSON(b []byte) error {
-	var arr *[]RailSegment
-	arr = (*[]RailSegment)(p)
+	arr := (*[]RailSegment)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -673,8 +662,7 @@ type Restaurants []Restaurant
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Restaurants) UnmarshalJSON(b []byte) error {
-	var arr *[]Restaurant
-	arr = (*[]Restaurant)(p)
+	arr := (*[]Restaurant)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -733,8 +721,7 @@ type Transports []Transport
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Transports) UnmarshalJSON(b []byte) error {
-	var arr *[]Transport
-	arr = (*[]Transport)(p)
+	arr := (*[]Transport)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -787,8 +774,7 @@ type TransportSegments []TransportSegment
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *TransportSegments) UnmarshalJSON(b []byte) error {
-	var arr *[]TransportSegment
-	arr = (*[]TransportSegment)(p)
+	arr := (*[]TransportSegment)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -827,8 +813,7 @@ type Trips []Trip
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Trips) UnmarshalJSON(b []byte) error {
-	var arr *[]Trip
-	arr = (*[]Trip)(p)
+	arr := (*[]Trip)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -919,8 +904,7 @@ type Profiles []Profile
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Profiles) UnmarshalJSON(b []byte) error {
-	var arr *[]Profile
-	arr = (*[]Profile)(p)
+	arr := (*[]Profile)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -967,8 +951,7 @@ type ProfileEmailAddresses []ProfileEmailAddress
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *ProfileEmailAddresses) UnmarshalJSON(b []byte) error {
-	var arr *[]ProfileEmailAddress
-	arr = (*[]ProfileEmailAddress)(p)
+	arr := (*[]ProfileEmailAddress)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -1001,8 +984,7 @@ type GroupMemberships []Group
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *GroupMemberships) UnmarshalJSON(b []byte) error {
-	var arr *[]Group
-	arr = (*[]Group)(p)
+	arr := (*[]Group)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -1066,8 +1048,7 @@ type Travelers []Traveler
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Travelers) UnmarshalJSON(b []byte) error {
-	var arr *[]Traveler
-	arr = (*[]Traveler)(p)
+	arr := (*[]Traveler)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {
@@ -1117,8 +1098,7 @@ type Invitees []Invitee
 
 // UnmarshalJSON builds the vector from the JSON in b.
 func (p *Invitees) UnmarshalJSON(b []byte) error {
-	var arr *[]Invitee
-	arr = (*[]Invitee)(p)
+	arr := (*[]Invitee)(p)
 	*arr = nil
 	err := json.Unmarshal(b, arr)
 	if err != nil {

@@ -28,7 +28,6 @@ var (
 	googleCalendarKeyfile string
 	calendarName          string
 	credsDir              string
-	pastFilter            string
 
 	tripitUsername string
 	tripitPassword string
@@ -88,7 +87,7 @@ func main() {
 		}
 
 		if _, err := os.Stat(googleCalendarKeyfile); os.IsNotExist(err) {
-			return fmt.Errorf("Google Calendar keyfile %q does not exist", googleCalendarKeyfile)
+			return fmt.Errorf("google calendar keyfile %q does not exist", googleCalendarKeyfile)
 		}
 
 		if len(calendarName) < 1 {
