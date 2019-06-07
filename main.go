@@ -139,15 +139,14 @@ func main() {
 
 		// If the user passed the once flag, just do the run once and exit.
 
-		if once {
-			run(tripitClient, gcalClient, calendarName, pastFilter)
-			logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
-			os.Exit(0)
-		}
+		run(tripitClient, gcalClient, calendarName, pastFilter)
+		logrus.Infof("Updated TripIt calendar entries in Google calendar %s", calendarName)
 
-		logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
-		for range ticker.C {
-			run(tripitClient, gcalClient, calendarName, pastFilter)
+		if !once {
+			logrus.Infof("Starting bot to update TripIt calendar entries in Google calendar %s every %s", calendarName, interval)
+			for range ticker.C {
+				run(tripitClient, gcalClient, calendarName, pastFilter)
+			}
 		}
 
 		return nil
@@ -271,13 +270,18 @@ func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) (
 	}
 
 	// Paginate.
-	pageNum, err := strconv.Atoi(resp.PageNum)
-	if err != nil {
-		return nil, err
+	var pageNum, maxPage int
+	if resp.PageNum != "" {
+		pageNum, err = strconv.Atoi(resp.PageNum)
+		if err != nil {
+			return nil, err
+		}
 	}
-	maxPage, err := strconv.Atoi(resp.MaxPage)
-	if err != nil {
-		return nil, err
+	if resp.MaxPage != "" {
+		maxPage, err = strconv.Atoi(resp.MaxPage)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if pageNum < maxPage {
