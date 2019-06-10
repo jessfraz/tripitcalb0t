@@ -44,7 +44,7 @@ type Response struct {
 
 	Transports     Transports      `json:"TransportObject,omitempty" xml:"TransportObject"` // optional
 	Trips          Trips           `json:"Trip,omitempty" xml:"Trip"`                       // optional
-	Weather        []Weather       `json:"WeatherObject,omitempty" xml:"WeatherObject"`     // optional
+	Weather        WeatherReports  `json:"WeatherObject,omitempty" xml:"WeatherObject"`     // optional
 	PointsPrograms []PointsProgram `json:"PointsProgram,omitempty" xml:"PointsProgram"`     // optional
 	Profiles       Profiles        `json:"Profile,omitempty" xml:"Profile"`                 // optional
 
@@ -846,6 +846,29 @@ type Trip struct {
 	ClosenessMatches       ClosenessMatches `json:"ClosenessMatches,omitempty" xml:"ClosenessMatches"`                 // optional, ClosenessMatches are read-only
 	Invitees               Invitees         `json:"TripInvitees,omitempty" xml:"TripInvitees"`                         // optional, Invitees are read-only
 	Remarks                Remarks          `json:"TripCrsRemarks,omitempty" xml:"TripCrsRemarks"`                     // optional, Remarks are read-only
+}
+
+// WeatherReports is a group of Weather objects.
+type WeatherReports []Weather
+
+// UnmarshalJSON builds the vector from the JSON in b.
+func (p *WeatherReports) UnmarshalJSON(b []byte) error {
+	arr := (*[]Weather)(p)
+	*arr = nil
+	err := json.Unmarshal(b, arr)
+	if err != nil {
+		*arr = make([]Weather, 1)
+		err := json.Unmarshal(b, &(*arr)[0])
+		if err != nil {
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				*arr = (*arr)[0:0]
+			} else {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
 
 // Weather contains information about the weather at a particular destination. Weather is read-only.
