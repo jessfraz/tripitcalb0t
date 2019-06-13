@@ -180,8 +180,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		var matchingEvent *calendar.Event
 		for _, e := range events.Items {
 			// We only care about TripIt events that match our tripID or segmentID.
-			if (strings.Contains(strings.ToLower(e.Description), "tripit") ||
-				strings.Contains(strings.ToLower(e.Summary), "flight")) &&
+			if trip.Title == e.Summary &&
 				strings.Contains(e.Description, trip.SegmentID) {
 				matchingEvent = e
 				break
@@ -190,10 +189,6 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 
 		// Get airport information.
 		airport := getAirportName(trip.AirportCode)
-		if airport == "" {
-			logrus.Errorf("getting airport information from iata database for %s returned no match", trip.AirportCode)
-			continue
-		}
 
 		if matchingEvent == nil {
 			// No event was found for this trip, let's create one.
@@ -203,7 +198,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 				Start:       &trip.Start,
 				End:         &trip.End,
 				Location:    airport,
-				ColorId:     "3",
+				ColorId:     trip.ColorID,
 			}
 
 			// Insert the event.
@@ -220,7 +215,7 @@ func run(tripitClient *tripit.Client, gcalClient *calendar.Service, calendarName
 		matchingEvent.Start = &trip.Start
 		matchingEvent.End = &trip.End
 		matchingEvent.Location = airport
-		matchingEvent.ColorId = "3"
+		matchingEvent.ColorId = trip.ColorID
 
 		// Update the event.
 		_, err = gcalClient.Events.Update(calendarName, matchingEvent.Id, matchingEvent).Do()
@@ -309,6 +304,10 @@ func getTripItEvents(tripitClient *tripit.Client, page int, pastFilter string) (
 }
 
 func getAirportName(code string) string {
+	if len(code) < 1 {
+		return ""
+	}
+
 	for _, airport := range openflights.Airports {
 		if airport.IATA == code {
 			return airport.Name

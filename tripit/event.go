@@ -32,6 +32,9 @@ Check-in URL: %s
 View and/or edit details of this flight [%s]: https://www.tripit.com/%s
 
 View and/or edit details of this trip: https://www.tripit.com/trip/show/id/%s`
+
+	eventColorID  = "3"
+	bufferColorID = "8"
 )
 
 // Event holds the data we will use when creating calendar events for flights, activities, and other
@@ -45,6 +48,7 @@ type Event struct {
 	ID                 string
 	SegmentID          string
 	ConfirmationNumber string
+	ColorID            string
 }
 
 // GetFlightSegmentsAsEvents returns an Event object for each of the
@@ -54,7 +58,9 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 	events := []Event{}
 
 	// Iterate over the flight segments.
-	for _, segment := range f.Segments {
+	for i := 0; i < len(f.Segments); i++ {
+		segment := f.Segments[i]
+
 		// Get the flight start time.
 		startDate, err := segment.StartDateTime.Parse()
 		if err != nil {
@@ -128,7 +134,52 @@ func (f Flight) GetFlightSegmentsAsEvents() ([]Event, error) {
 			ID:                 f.TripID,
 			SegmentID:          segment.ID,
 			ConfirmationNumber: confirmationNumber,
+			ColorID:            eventColorID,
 		})
+
+		// If we have the first item in the segment, create the buffer event
+		// for travel time to the airport.
+		if i == 0 {
+			events = append(events, Event{
+				Title:       fmt.Sprintf("Buffer for travel time to %s & security", segment.StartAirportCode),
+				Description: description,
+				AirportCode: segment.StartAirportCode,
+				Start: calendar.EventDateTime{
+					DateTime: startDate.Add(-3 * time.Hour).Format(time.RFC3339),
+					TimeZone: segment.StartDateTime.Timezone,
+				},
+				End: calendar.EventDateTime{
+					DateTime: startDate.Format(time.RFC3339),
+					TimeZone: segment.StartDateTime.Timezone,
+				},
+				ID:                 f.TripID,
+				SegmentID:          segment.ID,
+				ConfirmationNumber: confirmationNumber,
+				ColorID:            bufferColorID,
+			})
+		}
+		// If we have the last item in the segment, create the buffer event
+		// for travel time from the airport.
+		if i == len(f.Segments)-1 {
+			events = append(events, Event{
+				Title:       fmt.Sprintf("Buffer for travel time from %s", segment.EndAirportCode),
+				Description: description,
+				// TODO: put the hotel as location here.
+				AirportCode: "",
+				Start: calendar.EventDateTime{
+					DateTime: endDate.Format(time.RFC3339),
+					TimeZone: segment.EndDateTime.Timezone,
+				},
+				End: calendar.EventDateTime{
+					DateTime: endDate.Add(2 * time.Hour).Format(time.RFC3339),
+					TimeZone: segment.EndDateTime.Timezone,
+				},
+				ID:                 f.TripID,
+				SegmentID:          segment.ID,
+				ConfirmationNumber: confirmationNumber,
+				ColorID:            bufferColorID,
+			})
+		}
 	}
 
 	return events, nil
