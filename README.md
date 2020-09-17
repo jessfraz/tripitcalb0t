@@ -13,15 +13,14 @@ I have OCD about the layout of my calendar events so that is why I made my own b
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [tripitcalb0t](#tripitcalb0t)
-  - [Installation](#installation)
-      - [Binaries](#binaries)
-      - [Via Go](#via-go)
-      - [Running with Docker](#running-with-docker)
-  - [Usage](#usage)
-  - [Setup](#setup)
-    - [Google Calendar](#google-calendar)
-    - [TripIt](#tripit)
+- [Installation](#installation)
+    - [Binaries](#binaries)
+    - [Via Go](#via-go)
+    - [Running with Docker](#running-with-docker)
+- [Usage](#usage)
+- [Setup](#setup)
+  - [Google Calendar](#google-calendar)
+  - [TripIt](#tripit)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
