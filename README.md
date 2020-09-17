@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [tripitcalb0t](#tripitcalb0t)
+  - [Installation](#installation)
+      - [Binaries](#binaries)
+      - [Via Go](#via-go)
+      - [Running with Docker](#running-with-docker)
+  - [Usage](#usage)
+  - [Setup](#setup)
+    - [Google Calendar](#google-calendar)
+    - [TripIt](#tripit)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # tripitcalb0t
 
 [![make-all](https://github.com/jessfraz/tripitcalb0t/workflows/make%20all/badge.svg)](https://github.com/jessfraz/tripitcalb0t/actions?query=workflow%3A%22make+all%22)
