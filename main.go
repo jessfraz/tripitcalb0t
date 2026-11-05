@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"os/user"
@@ -120,7 +119,7 @@ func main() {
 		tripitClient := tripit.New(tripitUsername, tripitPassword)
 
 		// Create the Google calendar API client.
-		gcalData, err := ioutil.ReadFile(googleCalendarKeyfile)
+		gcalData, err := os.ReadFile(googleCalendarKeyfile)
 		if err != nil {
 			logrus.Fatalf("reading file %s failed: %v", googleCalendarKeyfile, err)
 		}

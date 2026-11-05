@@ -7,14 +7,11 @@ cloud.google.com/go/compute/metadata
 ## explicit
 github.com/genuinetools/pkg/cli
 # github.com/golang/protobuf v1.2.0
-github.com/golang/protobuf/proto
-# github.com/kr/pretty v0.1.0
 ## explicit
+github.com/golang/protobuf/proto
 # github.com/mmcloughlin/openflights v0.0.0-20170819211133-257f09e6e50c
 ## explicit
 github.com/mmcloughlin/openflights
-# github.com/onsi/gomega v1.4.2
-## explicit
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 # github.com/sirupsen/logrus v1.0.5
@@ -22,11 +19,11 @@ github.com/mmcloughlin/openflights
 github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.2.2
 ## explicit
-# golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
-## explicit
+# golang.org/x/crypto v0.52.0
+## explicit; go 1.25.0
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20190620200207-3b0461eec859
-## explicit
+# golang.org/x/net v0.54.0
+## explicit; go 1.25.0
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 # golang.org/x/oauth2 v0.0.0-20180620175406-ef147856a6dd
@@ -36,11 +33,16 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sync v0.0.0-20190423024810-112230192c58
-## explicit
-# golang.org/x/sys v0.0.0-20190412213103-97732733099d
+# golang.org/x/sync v0.20.0
+## explicit; go 1.25.0
+# golang.org/x/sys v0.45.0
+## explicit; go 1.25.0
+golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
+# golang.org/x/term v0.43.0
+## explicit; go 1.25.0
+golang.org/x/term
 # google.golang.org/api v0.0.0-20180716222000-81e9282165ac
 ## explicit
 google.golang.org/api/calendar/v3
@@ -60,8 +62,6 @@ google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
 # gopkg.in/airbrake/gobrake.v2 v2.0.9
-## explicit
-# gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 ## explicit
 # gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2
 ## explicit
