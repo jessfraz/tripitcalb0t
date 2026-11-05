@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -59,7 +58,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*Response
 	// Check that the response status code was OK.
 	if resp.StatusCode != http.StatusOK {
 		// Read the body of the request, ignore the error since we are already in the error state.
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 
 		// Create a friendly error message based off the status code returned.
 		// These come from: https://tripit.github.io/api/doc/v1/index.html#http_status_codes_section
@@ -84,16 +83,12 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*Response
 
 		return nil, fmt.Errorf("%s request to %s returned status code %d: message -> %s\nbody -> %s", method, uri, resp.StatusCode, message, string(body))
 	}
-	/*body, _ := ioutil.ReadAll(resp.Body)
-	var out bytes.Buffer
-	json.Indent(&out, body, "", "  ")
-	logrus.Fatalf("body: %s", string(body))*/
 
 	// Decode the response into a TripIt Response object.
 	var r Response
 	if err := decodeResponse(resp, &r); err != nil {
 		// Read the body of the request, ignore the error since we are already in the error state.
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 
 		return nil, fmt.Errorf("decoding response from %s request to %s failed: body -> %s\nerr -> %v", method, uri, string(body), err)
 	}
